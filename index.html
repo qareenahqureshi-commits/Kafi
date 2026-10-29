@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<title>Kafi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F3F4EF; --surface:#FFFFFF; --surface2:#ECEFE8; --tint:#F7F3EA; --ink:#13201A; --muted:#5D6B63; --line:#DCE2DA;
+  --accent:#1D6B57; --accent-ink:#FFFFFF; --saffron:#B8761A;
+  --fresh:#2B8F60; --soon:#C48D14; --exp:#C9452E; --leftover:#7356C2; --plan:#1A86A0;
+  --shadow:0 1px 2px rgba(19,32,26,.05),0 10px 30px -12px rgba(19,32,26,.14);
+  --stage:#0A1310; --glass:rgba(10,20,17,.72); --glass-line:rgba(170,210,195,.14); --glass-ink:#E8F0EC; --glass-muted:#93A89E; --mint:#4DB292;
+  --f-display:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Readex Pro",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1310; --surface:#111C18; --surface2:#182420; --tint:#16211C; --ink:#E6EEE9; --muted:#93A39A; --line:#22312B;
+  --accent:#4DB292; --accent-ink:#06120E; --saffron:#E2A548;
+  --fresh:#4BBF88; --soon:#E6B449; --exp:#EE6A51; --leftover:#A68AEA; --plan:#4FC0DA;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -14px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1310; --surface:#111C18; --surface2:#182420; --tint:#16211C; --ink:#E6EEE9; --muted:#93A39A; --line:#22312B;
+  --accent:#4DB292; --accent-ink:#06120E; --saffron:#E2A548;
+  --fresh:#4BBF88; --soon:#E6B449; --exp:#EE6A51; --leftover:#A68AEA; --plan:#4FC0DA;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -14px rgba(0,0,0,.6); color-scheme:dark}
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;overflow:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(1.55rem,1.1rem + 1.7vw,2.25rem);font-weight:600;letter-spacing:-.015em}
+h2{font-size:1.1rem;font-weight:600}
+h3{font-size:.95rem;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--f-display);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+[dir="rtl"] .eyebrow{letter-spacing:0}
+.mono,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+.app{display:grid;grid-template-columns:252px minmax(0,1fr);height:100%}
+.nav{background:var(--surface);border-inline-end:1px solid var(--line);display:flex;flex-direction:column;min-height:0;padding-block:18px 12px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:14px}
+[dir="rtl"] .nav{padding-right:max(14px,env(safe-area-inset-right,0px));padding-left:14px}
+.brand{display:flex;align-items:center;gap:11px;padding:0 8px 18px}
+.brand-mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,#2A8A6F,#164F41);color:#fff;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:1.1rem;box-shadow:0 6px 16px -6px rgba(29,107,87,.7)}
+.brand b{font-family:var(--f-display);font-size:1.15rem;display:block;line-height:1.1}
+.brand small{color:var(--muted);font-size:.74rem}
+.nav-scroll{overflow:auto;flex:1;display:flex;flex-direction:column;gap:16px}
+.nav-group{display:flex;flex-direction:column;gap:2px}
+.nav-group .eyebrow{padding:4px 10px 6px}
+.nav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:.92rem}
+.nav a svg{width:18px;height:18px;flex:none;stroke:var(--muted);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nav a:hover{background:var(--surface2)}
+.nav a.on{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);font-weight:600}
+.nav a.on svg{stroke:var(--accent)}
+.nav a .count{margin-inline-start:auto;background:var(--exp);color:#fff;font-size:.68rem;border-radius:99px;padding:0 7px;font-family:var(--f-mono)}
+.nav-foot{border-top:1px solid var(--line);padding:12px 8px 0;font-size:.72rem;color:var(--muted);line-height:1.45}
+
+.main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:10px;padding-block:10px;padding-left:18px;padding-right:max(16px,env(safe-area-inset-right,0px));background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+[dir="rtl"] .top{padding-right:18px;padding-left:max(16px,env(safe-area-inset-left,0px))}
+.menu-btn{display:none}
+.hh{min-width:0;flex:1;display:flex;align-items:center;gap:10px}
+.hh .av{display:flex}
+.hh .av span{width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);margin-inline-start:-8px;display:grid;place-items:center;font-size:.62rem;font-weight:600;color:#fff;font-family:var(--f-display)}
+.hh .av span:first-child{margin-inline-start:0}
+.hh .tx{min-width:0}
+.hh b{font-family:var(--f-display);font-weight:600;font-size:.93rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hh small{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.beat{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:99px;padding:4px 12px 4px 8px;background:var(--bg)}
+.beat canvas{width:92px;height:26px;display:block}
+.beat small{font-size:.7rem;color:var(--muted);white-space:nowrap}
+.ib{height:36px;min-width:36px;border:1px solid var(--line);border-radius:10px;background:var(--surface);display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;position:relative;font-size:.85rem}
+.ib:hover{background:var(--surface2)}
+.ib svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ib .dot{position:absolute;top:-5px;inset-inline-end:-5px;background:var(--exp);color:#fff;font-size:.64rem;min-width:18px;height:18px;border-radius:99px;display:grid;place-items:center;font-family:var(--f-mono);border:2px solid var(--surface)}
+.play{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:600}
+.play:hover{background:var(--accent);filter:brightness(1.08)}
+
+#view{flex:1;overflow:auto;min-height:0;position:relative}
+.page{max-width:1140px;margin:0 auto;padding-block:30px 120px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.page-head{display:flex;flex-direction:column;gap:8px;max-width:70ch}
+.page-head p.lede{color:var(--muted);font-size:1rem}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.split{grid-template-columns:minmax(0,1.75fr) minmax(0,1fr)}
+.split-r{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);min-width:0}
+.stat .eyebrow{display:block;margin-bottom:8px}
+.stat .v{font-family:var(--f-display);font-size:2rem;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.stat .s{color:var(--muted);font-size:.84rem;margin-top:6px}
+.stat.warn .v{color:var(--soon)} .stat.bad .v{color:var(--exp)} .stat.good .v{color:var(--fresh)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sec-head p{color:var(--muted);font-size:.86rem}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:2px 10px;font-size:.74rem;font-weight:500;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.p-fresh{color:var(--fresh);background:color-mix(in srgb,var(--fresh) 12%,transparent)}
+.p-soon{color:var(--soon);background:color-mix(in srgb,var(--soon) 14%,transparent)}
+.p-exp{color:var(--exp);background:color-mix(in srgb,var(--exp) 12%,transparent)}
+.p-leftover{color:var(--leftover);background:color-mix(in srgb,var(--leftover) 13%,transparent)}
+.p-plan{color:var(--plan);background:color-mix(in srgb,var(--plan) 13%,transparent)}
+.p-muted{color:var(--muted);background:var(--surface2)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:9px 15px;font-weight:500;font-size:.9rem;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{background:var(--surface2)}
+.btn.pri{background:var(--accent);border-color:transparent;color:var(--accent-ink);font-weight:600;box-shadow:0 6px 18px -8px color-mix(in srgb,var(--accent) 80%,transparent)}
+.btn.pri:hover{filter:brightness(1.07);background:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:.84rem}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);min-width:0}
+.li:last-child{border-bottom:0}
+.li .grow{flex:1;min-width:0}
+.li .t{font-weight:500}
+.li .d{color:var(--muted);font-size:.82rem}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th{font-family:var(--f-display);font-weight:500;text-align:start;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+code,.tool{font-family:var(--f-mono);font-size:.8rem;background:var(--surface2);padding:1px 6px;border-radius:6px;white-space:nowrap}
+.mut{color:var(--exp);font-size:.72rem;font-weight:600;white-space:nowrap}
+.bar{height:6px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px}
+.foot{color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);padding-top:14px}
+
+/* food imagery */
+.th{flex:none;border-radius:14px;background:radial-gradient(circle at 50% 38%,var(--surface) 0,var(--tint) 70%);display:grid;place-items:center;overflow:hidden;border:1px solid var(--line)}
+.th img{width:100%;height:100%;object-fit:contain;display:block}
+.th.s40{width:40px;height:40px;border-radius:10px}
+.th.s48{width:48px;height:48px;border-radius:12px}
+.th.s56{width:56px;height:56px}
+.th.s64{width:64px;height:64px}
+.th.s96{width:96px;height:96px;border-radius:18px}
+.th i{width:40%;height:40%;border-radius:50%}
+.mini{width:22px;height:22px;border-radius:6px;vertical-align:middle;margin-inline-end:2px}
+
+/* Today hero */
+.hero-plate .th{width:84px;height:84px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;align-items:center;padding:26px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 9%,var(--surface)) 0,var(--surface) 60%);overflow:hidden;position:relative}
+.hero h1{margin-top:6px}
+.hero p.sum{color:var(--muted);margin-top:10px;font-size:1rem;max-width:52ch}
+.hero .row{margin-top:18px}
+.hero-plate{display:flex;justify-content:center;gap:10px;align-items:flex-end;position:relative}
+.hero-plate .th{box-shadow:0 14px 30px -16px rgba(0,0,0,.35)}
+.hero-plate .th:nth-child(2){width:116px;height:116px;border-radius:22px}
+.usefirst{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);position:relative}
+.fcard .th{width:100%;height:110px;border-radius:12px;border:0}
+.fcard b{font-size:.9rem;font-weight:600;line-height:1.25}
+.fcard .d{font-size:.76rem;color:var(--muted)}
+.fcard .pill{position:absolute;top:18px;inset-inline-start:18px}
+
+/* Kitchen 2D */
+.kit{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px}
+.appl{border-radius:22px;padding:14px;background:linear-gradient(180deg,#eef3f2,#dfe7e5);border:1px solid #cdd8d5;box-shadow:inset 0 1px 0 #fff,var(--shadow)}
+:root[data-theme="dark"] .appl{background:linear-gradient(180deg,#1b2724,#141e1b);border-color:#2a3a35;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),var(--shadow)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .appl{background:linear-gradient(180deg,#1b2724,#141e1b);border-color:#2a3a35;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),var(--shadow)}}
+.appl.wood{background:linear-gradient(180deg,#efe4d3,#e4d4bd);border-color:#d6c3a6}
+:root[data-theme="dark"] .appl.wood{background:linear-gradient(180deg,#2a2219,#221b14);border-color:#3a2f22}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .appl.wood{background:linear-gradient(180deg,#2a2219,#221b14);border-color:#3a2f22}}
+.appl-h{display:flex;justify-content:space-between;align-items:center;padding:2px 6px 10px}
+.appl-in{background:var(--surface);border-radius:14px;padding:4px 12px;border:1px solid var(--line)}
+.shelf{border-bottom:2px solid color-mix(in srgb,var(--plan) 22%,var(--line));padding:12px 0 12px;display:flex;flex-wrap:wrap;gap:10px;position:relative}
+.shelf:last-child{border-bottom:0}
+.food{border:1px solid var(--line);border-radius:14px;padding:8px;width:118px;background:var(--bg);display:flex;flex-direction:column;gap:6px;text-align:start;position:relative;transition:transform .2s,box-shadow .2s}
+.food:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.food .th{width:100%;height:76px;border:0;border-radius:10px}
+.food b{font-size:.8rem;font-weight:600;line-height:1.2}
+.food span{font-size:.7rem;color:var(--muted)}
+.food .bar{height:4px}
+.food.exp{border-color:color-mix(in srgb,var(--exp) 55%,var(--line))}
+.food.soon{border-color:color-mix(in srgb,var(--soon) 55%,var(--line))}
+.food.leftover{border-color:color-mix(in srgb,var(--leftover) 55%,var(--line))}
+.food .tag{position:absolute;top:12px;inset-inline-end:12px;width:10px;height:10px;border-radius:50%;box-shadow:0 0 0 3px var(--bg)}
+.food.scan{animation:scan 1.1s ease}
+@keyframes scan{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--plan) 60%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--surface);font-size:.82rem;display:inline-flex;gap:7px;align-items:center}
+.fchip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.fchip[aria-pressed="false"]{opacity:.45}
+
+/* Cook */
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--surface)}
+.stepper .num{min-width:22px;text-align:center;font-weight:500}
+.members{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.member{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.member span{font-size:.8rem;color:var(--muted)}
+.dish{display:grid;grid-template-columns:56px minmax(0,1.4fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.1fr);gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.dish:last-child{border-bottom:0}
+.dish .kafi{font-family:var(--f-display);font-weight:600;font-size:1.15rem;color:var(--accent)}
+.dish .usual{color:var(--muted);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--exp) 60%,transparent)}
+.cmp{display:flex;flex-direction:column;gap:4px}
+.cmp .bar{height:8px}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:.88rem}
+.switch input{width:38px;height:22px;appearance:none;background:var(--surface2);border:1px solid var(--line);border-radius:99px;position:relative;cursor:pointer;margin:0}
+.switch input::after{content:"";position:absolute;top:2px;inset-inline-start:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:.2s}
+.switch input:checked{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.switch input:checked::after{inset-inline-start:18px;background:var(--accent)}
+input[type=range]{accent-color:var(--accent);width:100%}
+.ing{display:flex;flex-wrap:wrap;gap:8px}
+.ing .pill{padding:3px 10px 3px 4px}
+.ing .pill::before{display:none}
+.ing .pill img{width:22px;height:22px;border-radius:50%;background:var(--surface)}
+
+/* Basket */
+.bk{display:grid;grid-template-columns:48px minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);gap:12px;padding:13px 0;border-bottom:1px solid var(--line);align-items:center}
+.bk:last-child{border-bottom:0}
+.bk .why{font-size:.8rem;color:var(--muted);grid-column:2/-1;margin-top:-6px}
+.bk.head{padding-top:0}
+.strike{text-decoration:line-through;color:var(--muted)}
+.tot{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0}
+.tot b{font-family:var(--f-display);font-size:1.45rem}
+.tot .num{white-space:nowrap}
+.price-note{font-size:.76rem;color:var(--muted)}
+
+/* modal, drawer, toast, caption */
+.scrim{position:fixed;inset:0;background:rgba(6,12,10,.5);z-index:40;display:grid;place-items:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:20px;max-width:480px;width:100%;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:12px;max-height:90%;overflow:auto}
+.opt{border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-align:start;background:var(--bg);display:flex;gap:12px;align-items:center;width:100%}
+.opt .grow{flex:1;min-width:0}
+.opt:hover{border-color:var(--accent)}
+.drawer{position:fixed;top:0;bottom:0;inset-inline-end:0;width:min(420px,100%);background:var(--surface);border-inline-start:1px solid var(--line);z-index:30;transform:translateX(105%);transition:transform .35s ease;display:flex;flex-direction:column;padding-block:calc(env(safe-area-inset-top,0px) + 14px) 14px;padding-inline:16px;box-shadow:-10px 0 40px rgba(0,0,0,.18)}
+[dir="rtl"] .drawer{transform:translateX(-105%)}
+.drawer.open{transform:none!important}
+.drawer .trace{overflow:auto;flex:1;display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.tc{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.82rem;display:flex;flex-direction:column;gap:4px;animation:slide .35s ease}
+@keyframes slide{from{opacity:.2;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tc .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:60;font-size:.88rem;max-width:calc(100% - 32px)}
+.caption{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:35;width:min(760px,calc(100% - 32px));background:var(--glass);color:var(--glass-ink);border:1px solid var(--glass-line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.caption p{font-size:1rem;line-height:1.5}
+.caption .ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.caption .dots{display:flex;gap:4px;flex:1;min-width:120px}
+.caption .dots i{height:4px;flex:1;border-radius:9px;background:var(--glass-line)}
+.caption .dots i.on{background:var(--mint)}
+.caption button{background:transparent;border:1px solid var(--glass-line);color:var(--glass-ink);border-radius:8px;padding:5px 10px;font-size:.8rem}
+
+/* Twin stage */
+section[data-view="twin"]{height:100%}
+.twin-wrap{position:relative;height:100%;min-height:540px;background:radial-gradient(ellipse at 50% 30%,#13231d 0,#0A1310 70%);overflow:hidden;color:var(--glass-ink)}
+#twinCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.vignette{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(10,19,16,.75),rgba(10,19,16,0) 22%,rgba(10,19,16,0) 62%,rgba(10,19,16,.8))}
+#labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;transform:translate(-50%,calc(-100% - 10px));background:rgba(10,20,17,.82);border:1px solid var(--glass-line);border-radius:99px;padding:3px 9px 3px 6px;font-size:.7rem;white-space:nowrap;display:flex;gap:6px;align-items:center;transition:opacity .25s;opacity:0;backdrop-filter:blur(6px)}
+.lbl::after{content:"";position:absolute;left:50%;bottom:-8px;width:1px;height:8px;background:rgba(232,240,236,.5)}
+.lbl i{width:7px;height:7px;border-radius:50%;flex:none}
+.lbl em{font-style:normal;color:var(--glass-muted)}
+.lbl.big{font-size:.8rem;padding:6px 12px;font-family:var(--f-display);border-radius:12px}
+.gl{background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.tw-head{position:absolute;top:18px;inset-inline-start:max(18px,env(safe-area-inset-left,0px));max-width:min(460px,calc(100% - 36px));pointer-events:none}
+.tw-head .eyebrow{color:var(--mint);display:flex;align-items:center;gap:8px}
+.tw-head .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(77,178,146,.2);animation:live 2s infinite}
+@keyframes live{50%{box-shadow:0 0 0 7px rgba(77,178,146,0)}}
+.tw-head h1{font-size:clamp(1.2rem,.9rem + 1.2vw,1.7rem);color:var(--glass-ink);margin-top:6px}
+.tw-head p{color:var(--glass-muted);font-size:.84rem;margin-top:6px}
+.tw-right{position:absolute;top:18px;inset-inline-end:max(18px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+[dir="rtl"] .tw-right{align-items:flex-start}
+.tw-tools{display:flex;gap:4px;padding:4px;flex-wrap:wrap;justify-content:flex-end}
+.tw-layers{padding:12px 14px;width:230px}
+.tw-layers.off{display:none}
+.tw-layers h3{font-size:.72rem;font-family:var(--f-display);color:var(--glass-muted);font-weight:500;margin-bottom:6px;display:flex;justify-content:space-between;letter-spacing:.1em;text-transform:uppercase}
+.tw-layers label{display:flex;align-items:center;gap:9px;font-size:.84rem;padding:5px 0;cursor:pointer}
+.tw-layers input{accent-color:#4DB292}
+.tw-layers label i{width:9px;height:9px;border-radius:50%}
+.tw-layers label .n{margin-inline-start:auto;font-family:var(--f-mono);font-size:.72rem;color:var(--glass-muted)}
+.gbtn{background:transparent;border:1px solid transparent;color:var(--glass-ink);border-radius:11px;padding:7px 11px;font-size:.8rem;display:inline-flex;gap:7px;align-items:center;white-space:nowrap}
+.gbtn:hover{background:rgba(255,255,255,.06)}
+.gbtn kbd{font-family:var(--f-mono);font-size:.66rem;color:var(--glass-muted);border:1px solid var(--glass-line);border-radius:4px;padding:0 4px}
+.gbtn[aria-pressed="true"]{background:#4DB292;color:#06120E}
+.gbtn[aria-pressed="true"] kbd{color:#06120E;border-color:rgba(6,18,14,.35)}
+.gbtn.solo{background:var(--glass);border-color:var(--glass-line);backdrop-filter:blur(14px)}
+.gbtn.solo[aria-pressed="true"]{background:#4DB292;border-color:#4DB292}
+.tw-bottom{position:absolute;left:0;right:0;bottom:0;padding:0 max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.tw-bottom>*{pointer-events:auto}
+.tw-row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.tw-stops{display:flex;gap:2px;overflow-x:auto;padding:4px;scrollbar-width:none;max-width:100%}
+.tw-stops::-webkit-scrollbar{display:none}
+.tw-side{display:flex;gap:6px}
+.tw-time{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.track{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.track::before{content:"";position:absolute;top:9px;left:9px;right:9px;height:2px;background:var(--glass-line)}
+.track .fill{position:absolute;top:9px;inset-inline-start:9px;height:2px;background:var(--mint);transition:width .5s}
+.track button{position:relative;background:none;border:0;color:var(--glass-muted);padding:0;text-align:start;display:flex;flex-direction:column;gap:6px;font-size:.8rem;min-width:0}
+.track button i{width:20px;height:20px;border-radius:50%;background:#0f1c18;border:2px solid var(--glass-line);display:block}
+.track button.on,.track button.past{color:var(--glass-ink)}
+.track button.past i{background:var(--mint);border-color:var(--mint)}
+.track button.on i{background:#0f1c18;border-color:var(--mint);box-shadow:0 0 0 5px rgba(77,178,146,.22)}
+.track button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tw-time .note{font-size:.9rem;color:var(--glass-ink);display:flex;gap:10px;align-items:center}
+.tw-time .note b{font-family:var(--f-mono);font-weight:500;color:var(--mint);white-space:nowrap}
+.side-panel{position:absolute;inset-inline-start:max(18px,env(safe-area-inset-left,0px));top:120px;width:min(330px,calc(100% - 36px));padding:14px 16px;display:flex;flex-direction:column;gap:10px;max-height:calc(100% - 330px);overflow:auto}
+.side-panel h3{font-size:.85rem;display:flex;justify-content:space-between;align-items:center}
+.side-panel h3 button{background:none;border:0;color:var(--glass-muted);font-size:1rem}
+.sig{display:flex;justify-content:space-between;gap:10px;font-size:.8rem;border-bottom:1px solid var(--glass-line);padding-bottom:8px}
+.sig:last-child{border:0}
+.sig span{color:var(--glass-muted)}
+.sig b{font-family:var(--f-mono);font-weight:500;text-align:end}
+.agent{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:4px 10px;align-items:center;border-bottom:1px solid var(--glass-line);padding-bottom:9px}
+.agent:last-child{border:0}
+.agent b{font-size:.82rem}
+.agent small{grid-column:1/2;color:var(--glass-muted);font-size:.74rem;line-height:1.35}
+.agent canvas{grid-row:1/3;grid-column:2;width:84px;height:30px}
+.boot{position:absolute;inset:0;display:grid;place-items:end center;padding:16px 16px calc(26px + env(safe-area-inset-bottom,0px));z-index:4;background:linear-gradient(to top,rgba(10,19,16,.9),rgba(10,19,16,.15) 60%)}
+.boot .gl{width:min(520px,100%);padding:22px 24px;display:flex;flex-direction:column;gap:14px}
+.boot h2{font-size:.86rem;letter-spacing:.22em;text-transform:uppercase}
+[dir="rtl"] .boot h2{letter-spacing:0}
+.boot ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.boot li{display:flex;align-items:center;gap:11px;color:var(--glass-muted);font-size:.93rem;transition:color .3s}
+.boot li i{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--glass-line);display:grid;place-items:center;font-style:normal;font-size:.7rem;flex:none}
+.boot li.on{color:var(--glass-ink)} .boot li.on i{border-color:#4DB292;box-shadow:0 0 0 3px rgba(77,178,146,.2)}
+.boot li.done{color:var(--glass-ink)} .boot li.done i{background:#4DB292;border-color:#4DB292;color:#06120E}
+.boot .prog{height:2px;background:var(--glass-line);border-radius:2px;overflow:hidden}
+.boot .prog i{display:block;height:100%;width:0;background:#4DB292;transition:width .5s}
+.boot .row{justify-content:space-between}
+.boot .row small{color:var(--glass-muted)}
+.boot .gbtn{border-color:var(--glass-line)}
+.tw-fallback{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center}
+
+/* charts */
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.ring text{font-family:var(--f-display)}
+.heart-big canvas{width:100%;height:120px;display:block}
+.events{display:flex;flex-direction:column}
+.ev{display:grid;grid-template-columns:48px 12px minmax(0,1fr);gap:10px;align-items:start;padding:8px 0;font-size:.86rem;border-bottom:1px dashed var(--line)}
+.ev:last-child{border:0}
+.ev time{font-family:var(--f-mono);color:var(--muted);font-size:.76rem;padding-top:2px}
+.ev i{width:10px;height:10px;border-radius:50%;margin-top:6px}
+.ev small{display:block;color:var(--muted);font-size:.74rem}
+.src{font-size:.76rem;color:var(--muted)}
+.src a{color:var(--muted)}
+.rule{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.rule:last-child{border:0}
+.rule .ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--accent);flex:none;font-weight:700;font-family:var(--f-display)}
+.rule.no .ico{background:color-mix(in srgb,var(--exp) 12%,transparent);color:var(--exp)}
+.idea{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.idea:last-child{border:0}
+
+@media (max-width:1040px){
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kit,.split,.split-r{grid-template-columns:minmax(0,1fr)}
+  .members{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:820px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .nav{position:fixed;top:0;bottom:0;inset-inline-start:0;width:min(290px,86%);z-index:45;transform:translateX(-105%);transition:transform .3s;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  [dir="rtl"] .nav{transform:translateX(105%)}
+  .nav.open{transform:none!important;box-shadow:20px 0 60px rgba(0,0,0,.3)}
+  .menu-btn{display:inline-flex}
+  .beat canvas{width:56px}
+  .beat small,.hide-sm,.hh .av{display:none}
+  .g2,.hero{grid-template-columns:minmax(0,1fr)}
+  .hero-plate{display:none}
+  .dish{grid-template-columns:48px minmax(0,1fr) auto;gap:6px 12px}
+  .dish .usual{grid-column:3}
+  .dish .cmp{grid-column:2/-1}
+  .bk{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr)}
+  .bk>:nth-child(2){grid-column:2/-1}
+  .bk.head>:nth-child(2){grid-column:auto}
+  .bk.head{display:none}
+  .tw-layers{display:none}
+  .tw-layers.show{display:block}
+  .tw-layers.off{display:none}
+  .tw-head p{display:none}
+  .tw-tools .lbl-t{display:none}
+  .side-panel{top:96px;max-height:calc(100% - 360px)}
+}
+@media (max-width:480px){
+  .g4,.g3{grid-template-columns:minmax(0,1fr)}
+  .stat .v{font-size:1.7rem}
+  .food{width:calc(50% - 5px)}
+  .usefirst{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app">
+  <aside class="nav" id="nav" aria-label="Main">
+    <div class="brand"><div class="brand-mark">ك</div><div><b data-i18n="brand"></b><small data-i18n="tagline"></small></div></div>
+    <div class="nav-scroll" id="navList"></div>
+    <div class="nav-foot" data-i18n="foot"></div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <button class="ib menu-btn" data-act="nav" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="hh"><div class="av"><span style="background:#1D6B57">M</span><span style="background:#B8761A">S</span><span style="background:#7356C2">+5</span></div><div class="tx"><b data-i18n="hh.name"></b><small data-i18n="hh.sub"></small></div></div>
+      <div class="beat" title="Agent heartbeat"><canvas id="beatTop"></canvas><small data-i18n="beat.live"></small></div>
+      <button class="ib" data-act="drawer" aria-label="Tool calls"><svg viewBox="0 0 24 24"><path d="M8 6l-5 6 5 6M16 6l5 6-5 6"/></svg><span class="hide-sm" data-i18n="btn.tools"></span></button>
+      <button class="ib" data-go="approvals" aria-label="Approvals"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 004 0"/></svg><span class="dot" id="apDot">0</span></button>
+      <button class="ib" data-act="lang" id="langBtn">ع</button>
+      <button class="ib" data-act="theme" aria-label="Theme"><svg viewBox="0 0 24 24"><path d="M21 13A9 9 0 1111 3a7 7 0 0010 10z"/></svg></button>
+      <button class="ib play" data-act="play"><svg viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z" fill="currentColor"/></svg><span class="hide-sm" data-i18n="btn.play"></span></button>
+    </header>
+    <main id="view">
+      <section data-view="twin" hidden>
+        <div class="twin-wrap" id="twinWrap">
+          <canvas id="twinCanvas"></canvas>
+          <div class="vignette"></div>
+          <div id="labels"></div>
+          <div class="tw-head">
+            <p class="eyebrow" data-i18n="twin.eyebrow"></p>
+            <h1 data-i18n="q.twin"></h1>
+            <p data-i18n="twin.help"></p>
+          </div>
+          <div class="tw-right">
+            <div class="gl tw-tools">
+              <button class="gbtn" data-act="layers" id="bLayers" aria-pressed="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span class="lbl-t" data-i18n="tw.layers"></span><kbd>L</kbd></button>
+              <button class="gbtn" data-act="xray" id="bXray" aria-pressed="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span class="lbl-t" data-i18n="tw.xray"></span><kbd>X</kbd></button>
+              <button class="gbtn" data-act="sep" id="bSep" aria-pressed="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="lbl-t" data-i18n="tw.sep"></span><kbd>E</kbd></button>
+              <button class="gbtn" data-go="kitchen"><span data-i18n="tw.2d"></span></button>
+            </div>
+            <div class="gl tw-layers" id="twLayers"></div>
+          </div>
+          <div class="gl side-panel" id="sidePanel" hidden></div>
+          <div class="tw-bottom">
+            <div class="tw-row">
+              <div class="gl tw-stops" id="twStops"></div>
+              <div class="tw-side">
+                <button class="gbtn solo" data-act="panel" data-p="signals" aria-pressed="false"><span data-i18n="tw.signals"></span></button>
+                <button class="gbtn solo" data-act="panel" data-p="agents" aria-pressed="false"><span data-i18n="tw.agents"></span></button>
+              </div>
+            </div>
+            <div class="gl tw-time" id="twTime"></div>
+          </div>
+          <div class="boot" id="boot" hidden>
+            <div class="gl">
+              <div class="row"><h2 data-i18n="boot.title"></h2><small data-i18n="hh.where"></small></div>
+              <ol id="bootList"></ol>
+              <div class="prog"><i id="bootProg"></i></div>
+              <div class="row"><small data-i18n="boot.note"></small><button class="gbtn" data-act="skipboot" data-i18n="boot.skip"></button></div>
+            </div>
+          </div>
+          <div class="tw-fallback" id="twFallback" hidden>
+            <div class="gl" style="padding:22px;max-width:420px;display:flex;flex-direction:column;gap:12px;align-items:center">
+              <h2 data-i18n="fb.title"></h2><p class="small" style="color:var(--glass-muted)" data-i18n="fb.body"></p>
+              <button class="gbtn solo" data-go="kitchen" data-i18n="tw.2d"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section data-view="home" hidden><div class="page" id="v-home"></div></section>
+      <section data-view="kitchen" hidden><div class="page" id="v-kitchen"></div></section>
+      <section data-view="cook" hidden><div class="page" id="v-cook"></div></section>
+      <section data-view="basket" hidden><div class="page" id="v-basket"></div></section>
+      <section data-view="orderin" hidden><div class="page" id="v-orderin"></div></section>
+      <section data-view="leftovers" hidden><div class="page" id="v-leftovers"></div></section>
+      <section data-view="pulse" hidden><div class="page" id="v-pulse"></div></section>
+      <section data-view="careem" hidden><div class="page" id="v-careem"></div></section>
+      <section data-view="insights" hidden><div class="page" id="v-insights"></div></section>
+      <section data-view="approvals" hidden><div class="page" id="v-approvals"></div></section>
+      <section data-view="audit" hidden><div class="page" id="v-audit"></div></section>
+      <section data-view="trust" hidden><div class="page" id="v-trust"></div></section>
+      <section data-view="sources" hidden><div class="page" id="v-sources"></div></section>
+    </main>
+  </div>
+</div>
+
+<aside class="drawer" id="drawer" aria-label="Careem MCP tool calls">
+  <div class="sec-head"><div><p class="eyebrow" data-i18n="dr.eyebrow"></p><h2 data-i18n="dr.title"></h2></div><button class="ib" data-act="drawer" aria-label="Close">✕</button></div>
+  <p class="small muted" data-i18n="dr.note"></p>
+  <div class="trace" id="trace"></div>
+</aside>
+<div id="modalRoot"></div>
+<div id="capRoot"></div>
+<div id="toastRoot"></div>
+<input type="file" id="photo" accept="image/*" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---------- copy (EN / AR) ---------- */
+const T={
+ 'brand':['Kafi','كافي'],
+ 'tagline':['Order enough. Waste nothing.','اطلب ما يكفي، ولا تهدر شيئاً.'],
+ 'foot':['Synthetic household · Real Careem MCP tool contracts · Real public UAE statistics','أسرة افتراضية · عقود أدوات Careem MCP حقيقية · إحصاءات إماراتية عامة حقيقية'],
+ 'hh.name':['Example household · 7 people','أسرة نموذجية · 7 أفراد'],
+ 'hh.sub':['Al Barsha, Dubai · 4 adults, 1 grandparent, 2 children','البرشاء، دبي · 4 بالغين، جدّة، طفلان'],
+ 'hh.where':['Al Barsha · Dubai','البرشاء · دبي'],
+ 'beat.live':['Kafi is running','كافي يعمل'],
+ 'btn.tools':['Tool calls','استدعاءات الأدوات'],
+ 'btn.play':['Play scenario','تشغيل السيناريو'],
+ 'g.household':['Household','المنزل'],'g.impact':['Impact','الأثر'],'g.assurance':['Assurance','الضمان'],
+ 'n.twin':['Kitchen twin','التوأم الرقمي للمطبخ'],'n.home':['Today','اليوم'],'n.kitchen':['Kitchen','المطبخ'],'n.cook':['Cook','الطبخ'],'n.basket':['Basket','السلة'],'n.leftovers':['Leftovers','البقايا'],
+ 'n.pulse':['Pulse','النبض'],'n.insights':['UAE insights','مؤشرات الإمارات'],
+ 'n.approvals':['Approvals','الموافقات'],'n.audit':['Audit trail','سجل الإجراءات'],'n.trust':['Trust & privacy','الثقة والخصوصية'],'n.sources':['Data sources','مصادر البيانات'],
+ 'q.twin':['Where is food about to be wasted?','أين سيُهدر الطعام قريباً؟'],
+ 'q.home':['What needs attention today?','ما الذي يحتاج انتباهك اليوم؟'],
+ 'q.kitchen':['What’s about to go off?','ما الذي سيتلف قريباً؟'],
+ 'q.cook':['How much should we cook tonight?','كم نطبخ الليلة؟'],
+ 'q.basket':['Do we really need all this?','هل نحتاج كل هذا فعلاً؟'],
+ 'q.leftovers':['What can tomorrow’s meal use?','ماذا يمكن أن تستخدم وجبة الغد؟'],
+ 'q.pulse':['What did we save?','ماذا وفّرنا؟'],
+ 'q.insights':['How big is the problem?','ما حجم المشكلة؟'],
+ 'q.approvals':['What is waiting for my yes?','ما الذي ينتظر موافقتي؟'],
+ 'q.audit':['What did Kafi do, and why?','ماذا فعل كافي، ولماذا؟'],
+ 'q.trust':['What can Kafi never do?','ما الذي لا يفعله كافي أبداً؟'],
+ 'q.sources':['Where do these numbers come from?','من أين تأتي هذه الأرقام؟'],
+ 'twin.eyebrow':['Kitchen twin · live','التوأم الرقمي للمطبخ · مباشر'],
+ 'twin.help':['Drag to orbit, scroll to zoom. Glowing items are close to going off.','اسحب للتدوير، ومرّر للتكبير. العناصر المضيئة قريبة من التلف.'],
+ 'tw.layers':['Layers','الطبقات'],'tw.xray':['See inside','الرؤية الداخلية'],'tw.sep':['Separate','فصل الرفوف'],'tw.2d':['2D view','عرض ثنائي'],
+ 'tw.signals':['Signals','الإشارات'],'tw.agents':['Agents','الوكلاء'],
+ 'ly.fresh':['Fresh','طازج'],'ly.soon':['Expiring','قارب على الانتهاء'],'ly.leftover':['Leftovers','بقايا'],'ly.incoming':['Incoming order','طلب في الطريق'],
+ 'st.city':['City','المدينة'],'st.home':['Home','المنزل'],'st.kitchen':['Kitchen','المطبخ'],'st.fridge':['Fridge','الثلاجة'],'st.bin':['Bin','سلة المهملات'],'st.impact':['Impact','الأثر'],
+ 'tl.now':['Now','الآن'],'tl.predicted':['Waste predicted','هدر متوقَّع'],'tl.acts':['Kafi acts','كافي يتصرّف'],'tl.saved':['Saved','تم التوفير'],
+ 'tln.now':['21 items mapped from 30 days of Careem orders. 6 need using soon.','21 عنصراً من طلبات Careem خلال 30 يوماً. 6 منها يجب استخدامها قريباً.'],
+ 'tln.predicted':['If nothing changes, spinach, coriander and last night’s rice go in the bin by tomorrow night.','إن لم يتغيّر شيء، ستذهب السبانخ والكزبرة وأرز الأمس إلى سلة المهملات بحلول مساء الغد.'],
+ 'tln.acts':['Tonight’s dinner is planned around them. Only 2 missing spices go in the basket.','عشاء الليلة مخطَّط حولها. يُضاف إلى السلة نوعان فقط من البهارات الناقصة.'],
+ 'tln.saved':['The bin stays light. Today’s saving is logged to Pulse.','سلة المهملات خفيفة. تم تسجيل توفير اليوم في النبض.'],
+ 'tlm.now':['6 to use','6 للاستخدام'],'tlm.predicted':['≈ 0.95 kg · Dh 9','≈ 0.95 كغ · 9 دراهم'],'tlm.acts':['+2 items','+2 عنصر'],'tlm.saved':['0.95 kg saved','0.95 كغ وُفّرت'],
+ 'boot.title':['Getting your kitchen ready','تجهيز مطبخك'],
+ 'boot.s1':['Reading 30 days of Careem orders','قراءة طلبات Careem لآخر 30 يوماً'],
+ 'boot.s2':['Mapping the fridge and pantry','رسم خريطة الثلاجة والمخزن'],
+ 'boot.s3':['Checking freshness','فحص الصلاحية'],
+ 'boot.s4':['Starting Kafi','تشغيل كافي'],
+ 'boot.note':['Example household. No real account is connected.','أسرة نموذجية. لا يوجد حساب حقيقي متصل.'],
+ 'boot.skip':['Skip','تخطٍّ'],
+ 'fb.title':['3D view unavailable','العرض ثلاثي الأبعاد غير متاح'],
+ 'fb.body':['This device could not start WebGL. The 2D kitchen shows the same information.','تعذّر تشغيل WebGL على هذا الجهاز. يعرض المطبخ ثنائي الأبعاد المعلومات نفسها.'],
+ 'dr.eyebrow':['Careem MCP','Careem MCP'],'dr.title':['Tool calls','استدعاءات الأدوات'],
+ 'dr.note':['Real tool names from the Careem MCP catalog. Calls are simulated in this demo. Red marks a tool that changes an order or spends money.','أسماء أدوات حقيقية من كتالوج Careem MCP. الاستدعاءات محاكاة في هذا العرض. الأحمر يعني أداة تغيّر طلباً أو تنفق مالاً.'],
+ 'changes':['changes order','يغيّر الطلب'],'readonly':['read-only','قراءة فقط'],
+ 'status.read':['Read','قراءة'],'status.wait':['Waiting for you','بانتظارك'],'status.done':['Done','تم'],'status.blocked':['Blocked','متوقف'],
+ 'days':['days left','أيام متبقية'],'day':['day left','يوم متبقٍ'],
+ 's.fresh':['Fresh','طازج'],'s.soon':['Use soon','استخدمه قريباً'],'s.exp':['Use today','استخدمه اليوم'],'s.leftover':['Leftover','بقايا'],'s.plan':['Planned','مخطَّط'],'s.gone':['Finished','منتهٍ'],
+ 'wasted':['Wasted by tomorrow','سيُهدر بحلول الغد'],'tonight':['Tonight: saloona','الليلة: صالونة'],'tmrw':['Tomorrow’s lunch','غداء الغد'],
+ 'fridge':['Fridge','الثلاجة'],'pantry':['Pantry','المخزن'],
+ 'h.greet':['Good morning','صباح الخير'],
+ 'h.sum':['6 items need using in the next 48 hours. Tonight’s dinner already uses 5 of them, and the Monday basket is ready for your review.','6 عناصر يجب استخدامها خلال 48 ساعة. عشاء الليلة يستخدم 5 منها، وسلة الاثنين جاهزة لمراجعتك.'],
+ 'h.exp':['Use within 48 hours','للاستخدام خلال 48 ساعة'],'h.exp.s':['Kafi plans meals around these','يخطط كافي الوجبات حولها'],
+ 'h.wait':['Waiting for your yes','بانتظار موافقتك'],'h.wait.s':['Nothing is ordered without you','لا يُطلب شيء دون موافقتك'],
+ 'h.left':['Leftovers to use','بقايا للاستخدام'],'h.left.s':['Already cooked, in the fridge','مطبوخة، في الثلاجة'],
+ 'h.saved':['Saved this month','وُفّر هذا الشهر'],
+ 'h.today':['Today’s heartbeat','نبض اليوم'],'h.today.s':['Everything Kafi checked or did, newest first.','كل ما فحصه كافي أو فعله، الأحدث أولاً.'],
+ 'h.next':['Next steps','الخطوات التالية'],
+ 'h.cook':['Plan tonight’s dinner','خطّط لعشاء الليلة'],'h.cook.s':['Built around spinach and chicken that need using.','مبني حول السبانخ والدجاج اللذين يجب استخدامهما.'],
+ 'h.basket':['Review the Monday basket','راجع سلة الاثنين'],'h.basket.s':['Kafi trimmed it against what you already have.','قلّصها كافي بناءً على ما لديك.'],
+ 'h.check':['Tell Kafi about last night','أخبر كافي عن الليلة الماضية'],'h.check.s':['One tap makes next week’s portions better.','نقرة واحدة تحسّن مقادير الأسبوع القادم.'],
+ 'open':['Open','فتح'],
+ 'k.lede':['Kafi estimates what is at home from past Careem orders and typical shelf life. Tap any item to mark it finished.','يقدّر كافي ما في المنزل من طلبات Careem السابقة ومدة الصلاحية المعتادة. انقر على أي عنصر لوضع علامة «منتهٍ».'],
+ 'k.scan':['Scan a fridge photo','امسح صورة الثلاجة'],
+ 'k.scan.note':['In this demo the photo is not analysed. On the day, Claude vision on Amazon Bedrock reads it.','في هذا العرض لا تُحلَّل الصورة. في يوم الهاكاثون، يقرأها Claude للرؤية عبر Amazon Bedrock.'],
+ 'k.scanning':['Matching photo to kitchen memory…','مطابقة الصورة مع ذاكرة المطبخ…'],
+ 'k.scanned':['Kitchen memory refreshed from your photo (simulated).','تم تحديث ذاكرة المطبخ من صورتك (محاكاة).'],
+ 'k.usefirst':['Use first','استخدم أولاً'],
+ 'k.finished':['Marked as finished','تم وضع علامة منتهٍ'],
+ 'k.correct':['Back in the kitchen','أُعيد إلى المطبخ'],
+ 'k.items':['items','عناصر'],
+ 'c.lede':['Amounts come from who is eating and how much your family actually left last time. Change anything and Kafi recalculates.','المقادير تعتمد على من سيأكل وكم تبقّى فعلاً في المرة الماضية. غيّر أي شيء وسيعيد كافي الحساب.'],
+ 'c.who':['Who is eating','من سيأكل'],
+ 'm.adults':['Adults','بالغون'],'m.elders':['Grandparents','أجداد'],'m.kids':['Children','أطفال'],'m.guests':['Guests','ضيوف'],
+ 'c.appetite':['Appetite tonight','الشهية الليلة'],'c.light':['Light','خفيفة'],'c.normal':['Normal','عادية'],'c.hungry':['Hungry','جائعون'],
+ 'c.ramadan':['Ramadan mode','وضع رمضان'],'c.ramadan.s':['Iftar portions, deliveries booked before the 3–5 pm rush','مقادير الإفطار، وحجز التوصيل قبل ذروة 3–5 مساءً'],
+ 'c.menu':['Tonight’s menu','قائمة الليلة'],
+ 'c.kafi':['Kafi','كافي'],'c.usual':['Usual','المعتاد'],
+ 'c.risk':['Leftover risk','خطر البقايا'],'c.risk.s':['Share of cooked food likely to be left','نسبة الطعام المطبوخ المتوقع أن يتبقّى'],
+ 'c.withusual':['usual amounts','المقادير المعتادة'],'c.withkafi':['with Kafi','مع كافي'],
+ 'c.ing':['Ingredients','المكوّنات'],'c.have':['at home','في المنزل'],'c.missing':['missing','ناقص'],'c.expiring':['use first','استخدم أولاً'],
+ 'c.add':['Add 2 missing items to basket','أضف العنصرين الناقصين إلى السلة'],'c.added':['Added to basket','أُضيفت إلى السلة'],
+ 'c.learn':['Learned from 8 weeks of check-ins','مستفاد من 8 أسابيع من المتابعة'],
+ 'b.lede':['Your usual Monday basket from past orders, checked against the kitchen. You approve before anything is ordered.','سلة الاثنين المعتادة من طلباتك السابقة، مقارنةً بما في المطبخ. توافق قبل طلب أي شيء.'],
+ 'b.item':['Item','العنصر'],'b.usual':['Usual basket','السلة المعتادة'],'b.kafi':['Kafi’s basket','سلة كافي'],
+ 'a.remove':['Removed','أُزيل'],'a.reduce':['Reduced','قُلّل'],'a.resize':['Swapped','استُبدل'],'a.keep':['Kept','أُبقي'],'a.add':['Added','أُضيف'],
+ 'b.total':['Total','الإجمالي'],'b.save':['You save','توفّر'],'b.avoid':['Food not bought to waste','طعام لن يُشترى ليُهدر'],
+ 'b.approve':['Review and approve','مراجعة وموافقة'],'b.placed':['Ordered · arriving in about 35 min','تم الطلب · يصل خلال 35 دقيقة تقريباً'],
+ 'b.store':['Careem Quik · Al Barsha','Careem Quik · البرشاء'],
+ 'b.prices':['Spinach prices checked by the team in UAE stores (Oct 2026). Other prices are typical UAE supermarket prices and approximate.','أسعار السبانخ تحقّق منها الفريق في متاجر الإمارات (أكتوبر 2026). الأسعار الأخرى أسعار معتادة في متاجر الإمارات وتقريبية.'],
+ 'oos.title':['Local spinach 250 g is out of stock','السبانخ المحلية 250 غ غير متوفرة'],
+ 'oos.body':['Quik Al Barsha has no 250 g spinach right now. Kafi will not pick a pricier pack without asking you.','لا تتوفر سبانخ 250 غ في Quik البرشاء حالياً. لن يختار كافي عبوة أغلى دون سؤالك.'],
+ 'oos.barakat':['One Barakat baby spinach 175 g','عبوة واحدة سبانخ صغيرة من بركات 175 غ'],'oos.skip':['Skip spinach this week','تخطَّ السبانخ هذا الأسبوع'],'oos.usual':['Keep the usual 2 packs','أبقِ العبوتين المعتادتين'],
+ 'oos.rec':['Closest amount','الأقرب للكمية'],
+ 'cf.title':['Place this order?','تأكيد هذا الطلب؟'],
+ 'cf.body':['Price checked with cart_get_basket_price just now. Payment uses your saved default.','تم التحقق من السعر عبر cart_get_basket_price الآن. الدفع بالطريقة الافتراضية المحفوظة.'],
+ 'cf.sim':['Simulated: no real order is placed in this demo.','محاكاة: لا يُرسل طلب حقيقي في هذا العرض.'],
+ 'cf.place':['Place order','تأكيد الطلب'],'cf.cancel':['Not now','ليس الآن'],
+ 'l.lede':['Cooked food is the biggest source of household waste. Kafi turns it into the next meal, then asks how it went.','الطعام المطبوخ أكبر مصدر للهدر المنزلي. يحوّله كافي إلى الوجبة التالية، ثم يسأل كيف كانت.'],
+ 'l.now':['In the fridge now','في الثلاجة الآن'],
+ 'l.ideas':['Ideas that need no new shopping','أفكار لا تحتاج تسوقاً جديداً'],
+ 'l.check':['How much was left from last night’s dinner?','كم تبقّى من عشاء الليلة الماضية؟'],
+ 'l.none':['None','لا شيء'],'l.some':['A little','قليل'],'l.lots':['A lot','كثير'],
+ 'l.thanks':['Thanks. Rice portions adjusted for next week.','شكراً. تم تعديل مقادير الأرز للأسبوع القادم.'],
+ 'l.chart':['Share of dinner left over, by week','نسبة العشاء المتبقية، حسب الأسبوع'],
+ 'l.wk':['Week','أسبوع'],
+ 'p.lede':['Every number here comes from this example household’s orders and check-ins.','كل رقم هنا مأخوذ من طلبات هذه الأسرة النموذجية ومتابعاتها.'],
+ 'p.kg':['Food saved','طعام تم توفيره'],'p.kg.s':['this month','هذا الشهر'],
+ 'p.aed':['Money saved','مال تم توفيره'],'p.aed.s':['vs the usual baskets','مقارنة بالسلال المعتادة'],
+ 'p.rate':['Dinner left over','العشاء المتبقي'],'p.rate.s':['down from 34% in week 1','انخفاضاً من 34% في الأسبوع الأول'],
+ 'p.orders':['Orders checked','طلبات تمت مراجعتها'],'p.orders.s':['all approved by you','جميعها بموافقتك'],
+ 'p.goal':['Halve our waste','نخفض هدرنا للنصف'],'p.goal.s':['The household’s share of the ne’ma 2030 goal: from 7.8 kg to 3.9 kg a week.','حصة الأسرة من هدف نِعمة 2030: من 7.8 كغ إلى 3.9 كغ أسبوعياً.'],
+ 'p.weekly':['Food wasted per week (kg)','الطعام المهدر أسبوعياً (كغ)'],'p.goalline':['3.9 kg goal','هدف 3.9 كغ'],
+ 'p.heart':['Agent heartbeat','نبض الوكيل'],'p.heart.s':['Each spike is a check or an action. Changes to an order always wait for you.','كل نبضة فحص أو إجراء. أي تغيير في الطلب ينتظر موافقتك دائماً.'],
+ 'p.of':['of goal','من الهدف'],
+ 'i.lede':['Public figures behind Kafi. Each one links to where it was published.','أرقام عامة وراء كافي. كل رقم مرتبط بمصدر نشره.'],
+ 'i.est':['Estimate','تقدير'],'i.global':['Global figure','رقم عالمي'],'i.company':['Company-reported','صادر عن الشركة'],'i.official':['Official','رسمي'],
+ 'ap.lede':['Kafi prepares. You decide. These are the things waiting on you.','كافي يجهّز. أنت تقرّر. هذه الأمور بانتظارك.'],
+ 'ap.none':['Nothing is waiting. Kafi will ask here before it changes any order.','لا شيء بانتظارك. سيسألك كافي هنا قبل تغيير أي طلب.'],
+ 'ap.basket':['Monday basket','سلة الاثنين'],'ap.check':['Leftover check-in','متابعة البقايا'],'ap.check.s':['Last night’s dinner','عشاء الليلة الماضية'],
+ 'au.lede':['Every Careem MCP tool call, with the reason. Calls that change an order are marked red and always follow your approval.','كل استدعاء لأدوات Careem MCP مع السبب. الاستدعاءات التي تغيّر الطلب باللون الأحمر وتأتي دائماً بعد موافقتك.'],
+ 'au.time':['Time','الوقت'],'au.agent':['Agent','الوكيل'],'au.tool':['Tool','الأداة'],'au.why':['Why','السبب'],'au.status':['Status','الحالة'],
+ 'au.all':['All calls','كل الاستدعاءات'],'au.mut':['Changes only','التغييرات فقط'],
+ 'tr.lede':['Kafi follows Careem’s Agent Playbook. These rules are enforced in code, before any tool is called.','يتبع كافي دليل الوكلاء من Careem. هذه القواعد مطبّقة برمجياً قبل استدعاء أي أداة.'],
+ 'tr.never':['Kafi never','كافي لا يفعل أبداً'],'tr.always':['Kafi always','كافي دائماً'],'tr.data':['Your data','بياناتك'],
+ 'so.lede':['What is real in this demo, and what is example data.','ما هو حقيقي في هذا العرض، وما هو بيانات نموذجية.'],
+ 'so.what':['What','العنصر'],'so.kind':['Type','النوع'],'so.where':['Source','المصدر'],
+ 'so.real':['Real','حقيقي'],'so.sim':['Simulated','محاكاة'],'so.syn':['Synthetic','افتراضي'],'so.est':['Estimate','تقدير'],
+ 'sc.exit':['Exit','خروج'],'sc.pause':['Pause','إيقاف مؤقت'],'sc.resume':['Resume','استئناف'],'sc.next':['Next','التالي'],
+ 'n.orderin':['Order in','الطلب من المطاعم'],'n.careem':['For Careem','لـ Careem'],
+ 'q.orderin':['How much should we order in?','كم نطلب من المطعم؟'],
+ 'q.careem':['Why would Careem want customers to waste less?','لماذا تريد Careem أن يهدر عملاؤها أقل؟'],
+ 'h.order':['Ordering in tonight?','ستطلب من مطعم الليلة؟'],'h.order.s':['Kafi right-sizes restaurant orders too.','كافي يحدد حجم طلبات المطاعم أيضاً.'],
+ 'o.lede':['Ordering dinner for the family? Kafi checks your usual restaurant and sizes the order to who is eating and what came back last time.','تطلب العشاء للعائلة؟ يتحقق كافي من مطعمك المعتاد ويحدد حجم الطلب حسب من سيأكل وما تبقّى في المرة الماضية.'],
+ 'o.rest':['Your usual: Lebanese grill · Al Barsha','مطعمك المعتاد: مشويات لبنانية · البرشاء'],
+ 'o.people':['people eating','أشخاص سيأكلون'],'o.change':['Change on Cook','غيّر من صفحة الطبخ'],
+ 'o.why':['In your last 5 orders, about a third of the grill and most of the fries came back to the fridge, and much of it reached the bin.','في آخر 5 طلبات، عاد نحو ثلث المشاوي ومعظم البطاطا إلى الثلاجة، ووصل كثير منها إلى سلة المهملات.'],
+ 'o.usual':['Usual order','الطلب المعتاد'],'o.kafi':['Kafi’s order','طلب كافي'],'o.dish':['Dish','الطبق'],
+ 'o.placed':['Ordered · arriving in about 40 min','تم الطلب · يصل خلال 40 دقيقة تقريباً'],
+ 'o.prices':['Example menu prices for a typical Dubai Lebanese grill.','أسعار قائمة نموذجية لمطعم مشويات لبناني معتاد في دبي.'],
+ 'o.cf':['Place this restaurant order?','تأكيد طلب المطعم هذا؟'],
+ 'o.left':['Expected leftovers','البقايا المتوقعة'],'o.avoid':['Food not ordered to waste','طعام لن يُطلب ليُهدر'],
+ 'sp.title':['Share sealed surplus with family','شارك الفائض المغلق مع العائلة'],
+ 'sp.lede':['Unopened items you won’t finish in time can go to family instead of the bin, sent by Careem Box.','العناصر غير المفتوحة التي لن تنتهي منها في الوقت يمكن إرسالها للعائلة بدلاً من رميها، عبر Careem Box.'],
+ 'sp.to':['Send to','إرسال إلى'],'sp.dest':['Grandma’s house · Al Safa','بيت الجدة · الصفا'],
+ 'sp.send':['Send with Careem Box','أرسل عبر Careem Box'],'sp.sent':['Rider on the way · about 25 min','المندوب في الطريق · نحو 25 دقيقة'],
+ 'sp.note':['Sealed, packaged items only. Box parcel categories for food are still to be confirmed with Careem.','عناصر مغلقة ومعبأة فقط. فئات طرود الطعام في Box بانتظار التأكيد مع Careem.'],
+ 'sp.pay':['How do you want to pay for delivery?','كيف تريد دفع رسوم التوصيل؟'],'sp.pay.s':['Careem Box asks you to choose. Kafi never picks for you.','يطلب Careem Box منك الاختيار. كافي لا يختار نيابةً عنك أبداً.'],
+ 'sp.fee':['Delivery fee (example)','رسوم التوصيل (مثال)'],
+ 'sp.card':['Saved card','البطاقة المحفوظة'],'sp.wallet':['Careem Pay wallet','محفظة Careem Pay'],'sp.cash':['Cash','نقداً'],
+ 'k.mem':['Where kitchen memory comes from','مصادر ذاكرة المطبخ'],
+ 'k.m1':['Careem orders','طلبات Careem'],'k.m1s':['Automatic · last 30 days','تلقائي · آخر 30 يوماً'],
+ 'k.m2':['Fridge photo','صورة الثلاجة'],'k.m2s':['Claude vision on Bedrock','Claude للرؤية عبر Bedrock'],
+ 'k.m3':['Receipts from other stores','إيصالات من متاجر أخرى'],'k.m3s':['Carrefour, Lulu, the baqala','كارفور، لولو، البقالة'],
+ 'k.m4':['One-tap corrections','تصحيح بنقرة'],'k.m4s':['Tap an item to mark it finished','انقر على عنصر لوضع علامة منتهٍ'],
+ 'k.receipt':['Scan a receipt','امسح إيصالاً'],'k.receipted':['Receipt read (simulated): labneh and halloumi bought elsewhere are now in kitchen memory.','تمت قراءة الإيصال (محاكاة): أصبحت اللبنة والحلوم المشتراة من متجر آخر في ذاكرة المطبخ.'],
+ 'ap.auto':['Autopilot for staples','الطيار الآلي للأساسيات'],'ap.auto.s':['Kafi can reorder milk, eggs and bread on its own, only within the weekly limit you set. Anything else waits for your yes.','يمكن لكافي إعادة طلب الحليب والبيض والخبز بنفسه، ضمن الحد الأسبوعي الذي تحدده فقط. أي شيء آخر ينتظر موافقتك.'],
+ 'ap.limit':['Weekly limit','الحد الأسبوعي'],'ap.sched':['Weekly basket drafted every Sunday at 21:00 for your review.','تُعدّ السلة الأسبوعية كل أحد الساعة 21:00 لمراجعتك.'],
+ 'ap.on':['Autopilot','الطيار الآلي'],'ap.staples':['Staples it may reorder','أساسيات يمكن إعادة طلبها'],
+ 'cb.lede':['Kafi makes each basket smaller but makes Careem the place a family decides what it needs. This model shows the trade. Move the assumptions.','يصغّر كافي كل سلة لكنه يجعل Careem المكان الذي تقرر فيه الأسرة ما تحتاجه. يوضح هذا النموذج المقايضة. حرّك الافتراضات.'],
+ 'cb.model':['Illustrative model with adjustable assumptions. Not Careem data. Assumes 2 kg less waste per household per week.','نموذج توضيحي بافتراضات قابلة للتعديل. ليست بيانات Careem. يفترض هدراً أقل بـ2 كغ لكل أسرة أسبوعياً.'],
+ 'cb.hh':['Households using Kafi','الأسر التي تستخدم كافي'],'cb.spend':['Weekly food spend per household','الإنفاق الأسبوعي على الطعام لكل أسرة'],
+ 'cb.share0':['Share spent on Careem today','الحصة المنفقة على Careem اليوم'],'cb.share1':['Share on Careem with Kafi','الحصة على Careem مع كافي'],'cb.cut':['Smaller baskets (less waste)','سلال أصغر (هدر أقل)'],
+ 'cb.before':['Careem food GMV per week, today','قيمة طلبات الطعام على Careem أسبوعياً، اليوم'],'cb.after':['With Kafi','مع كافي'],'cb.delta':['Change','التغيّر'],'cb.waste':['Food waste avoided per year','الهدر المتجنَّب سنوياً'],
+ 'cb.r1':['Share of wallet','حصة من الإنفاق'],'cb.r1s':['A family that trusts Kafi with “what do we need?” moves more of its shopping from the supermarket to Careem.','الأسرة التي تثق بكافي في «ماذا نحتاج؟» تنقل مزيداً من تسوقها من السوبرماركت إلى Careem.'],
+ 'cb.r2':['Retention','الاحتفاظ بالعملاء'],'cb.r2s':['A weekly habit with a visible saving is hard to leave.','عادة أسبوعية مع توفير ظاهر يصعب تركها.'],
+ 'cb.r3':['A Careem Plus perk','ميزة لـ Careem Plus'],'cb.r3s':['Kafi can sit inside the subscription, adding value without discounts.','يمكن أن يكون كافي ضمن الاشتراك، فيضيف قيمة دون خصومات.'],
+ 'cb.r4':['A national story','قصة وطنية'],'cb.r4s':['Measured kilos saved line Careem up with ne’ma’s goal to halve food waste by 2030.','الكيلوغرامات الموفرة المقاسة تضع Careem في صف هدف نِعمة لخفض هدر الطعام للنصف بحلول 2030.'],
+ 'cb.t':['tonnes','طن'],
+ 'example':['Example data','بيانات نموذجية'],
+ 'kg':['kg','كغ'],
+ 'lang':['ع','EN']
+};
+const t=k=>{const v=T[k];return v?v[S.lang==='ar'?1:0]:k};
+const L=o=>o?(S.lang==='ar'?o.ar:o.en):'';
+const fmt=(n,d=0)=>Number(n).toFixed(d);
+const aed=n=>(S.lang==='ar'?fmt(n,2)+' درهم':'Dh '+fmt(n,2));
+
+/* ---------- data ---------- */
+const ITEMS=[
+ {id:'chicken',en:'Chicken thighs',ar:'أفخاذ دجاج',z:'f',s:0,q:{en:'1.2 kg tray',ar:'صينية 1.2 كغ'},left:2,kg:1.2},
+ {id:'saloonaL',en:'Saloona (leftover)',ar:'صالونة (بقايا)',z:'f',s:0,q:{en:'400 g',ar:'400 غ'},left:2,kg:.4,lo:1},
+ {id:'riceL',en:'Cooked rice (leftover)',ar:'أرز مطبوخ (بقايا)',z:'f',s:0,q:{en:'600 g',ar:'600 غ'},left:1,kg:.6,lo:1},
+ {id:'spinach',en:'Spinach',ar:'سبانخ',z:'f',s:1,q:{en:'250 g bunch',ar:'ربطة 250 غ'},left:1,kg:.25},
+ {id:'coriander',en:'Coriander',ar:'كزبرة',z:'f',s:1,q:{en:'1 bunch',ar:'ربطة'},left:1,kg:.1},
+ {id:'tomato',en:'Tomatoes',ar:'طماطم',z:'f',s:1,q:{en:'1 kg',ar:'1 كغ'},left:3,kg:1},
+ {id:'cucumber',en:'Cucumbers',ar:'خيار',z:'f',s:1,q:{en:'6',ar:'6'},left:5,kg:.6},
+ {id:'lemon',en:'Lemons',ar:'ليمون',z:'f',s:1,q:{en:'8',ar:'8'},left:9,kg:.5},
+ {id:'laban',en:'Laban',ar:'لبن',z:'f',s:2,q:{en:'2 L',ar:'2 لتر'},left:4,kg:2},
+ {id:'milk',en:'Milk',ar:'حليب',z:'f',s:2,q:{en:'2 L',ar:'2 لتر'},left:3,kg:2},
+ {id:'yoghurt',en:'Yoghurt',ar:'زبادي',z:'f',s:2,q:{en:'1 kg',ar:'1 كغ'},left:2,kg:1},
+ {id:'labneh',en:'Labneh',ar:'لبنة',z:'f',s:2,q:{en:'400 g',ar:'400 غ'},left:5,kg:.4},
+ {id:'eggs',en:'Eggs',ar:'بيض',z:'f',s:3,q:{en:'30',ar:'30'},left:12,kg:1.8},
+ {id:'halloumi',en:'Halloumi',ar:'حلوم',z:'f',s:3,q:{en:'250 g',ar:'250 غ'},left:9,kg:.25},
+ {id:'rice',en:'Basmati rice',ar:'أرز بسمتي',z:'p',s:0,q:{en:'5 kg',ar:'5 كغ'},left:120,kg:5},
+ {id:'onion',en:'Onions',ar:'بصل',z:'p',s:0,q:{en:'2 kg',ar:'2 كغ'},left:10,kg:2},
+ {id:'khubz',en:'Arabic bread',ar:'خبز عربي',z:'p',s:1,q:{en:'2 packs',ar:'كيسان'},left:2,kg:.8},
+ {id:'dates',en:'Dates',ar:'تمر',z:'p',s:1,q:{en:'1 kg',ar:'1 كغ'},left:40,kg:1},
+ {id:'banana',en:'Bananas',ar:'موز',z:'p',s:2,q:{en:'6',ar:'6'},left:2,kg:.9},
+ {id:'mango',en:'Mangoes',ar:'مانجو',z:'p',s:2,q:{en:'3',ar:'3'},left:3,kg:.9},
+ {id:'cardamom',en:'Cardamom',ar:'هيل',z:'p',s:2,q:{en:'100 g',ar:'100 غ'},left:200,kg:.1}
+];
+const PLAN_TONIGHT=['spinach','coriander','chicken','tomato','onion'];
+const PLAN_TMRW=['riceL','saloonaL'];
+const INCOMING=[
+ {id:'loomi',en:'Loomi (dried lime)',ar:'لومي'},
+ {id:'bezar',en:'Bezar spice mix',ar:'بزار'}
+];
+const AGENTS={
+ pantry:{en:'Pantry agent',ar:'وكيل المخزن',col:'#4DB292'},
+ portion:{en:'Portion agent',ar:'وكيل المقادير',col:'#E2A548'},
+ basket:{en:'Basket agent',ar:'وكيل السلة',col:'#4FC0DA'},
+ leftover:{en:'Leftover agent',ar:'وكيل البقايا',col:'#A68AEA'}
+};
+const DISHES=[
+ {id:'saloona',en:'Chicken saloona with spinach',ar:'صالونة دجاج بالسبانخ',u:'g',per:{a:170,e:130,k:90},usual:1600,learn:.95,gpu:1},
+ {id:'machboos',en:'Rice for machboos (uncooked)',ar:'أرز للمكبوس (غير مطبوخ)',u:'g',per:{a:100,e:80,k:60},usual:900,learn:.88,gpu:1},
+ {id:'fattoush',en:'Fattoush salad',ar:'سلطة فتوش',u:'g',per:{a:110,e:90,k:60},usual:1100,learn:.9,gpu:1},
+ {id:'bread',en:'Arabic bread',ar:'خبز عربي',u:'pcs',per:{a:1.5,e:1,k:1},usual:16,learn:.85,gpu:60},
+ {id:'luqaimat',en:'Luqaimat',ar:'لقيمات',u:'pcs',per:{a:5,e:3,k:4},usual:50,learn:.9,gpu:15}
+];
+const INGREDIENTS=[
+ {id:'chicken',have:1},{id:'spinach',have:1,exp:1},{id:'coriander',have:1,exp:1},{id:'tomato',have:1},{id:'onion',have:1},{id:'rice',have:1},{id:'cucumber',have:1},{id:'khubz',have:1},{id:'dates',have:1},
+ {id:'loomi',have:0},{id:'bezar',have:0}
+];
+// spinach prices checked in UAE shops (Oct 2026), the rest are estimates
+const BASKET=[
+ {id:'khubz',th:'khubz',en:'Arabic bread',ar:'خبز عربي',uq:3,unit:{en:'large pack',ar:'كيس كبير'},price:3.5,kg:.4,act:'remove',why:{en:'You have 2 packs and use about 1 a day. Enough until Wednesday.',ar:'لديك كيسان وتستهلكون نحو كيس يومياً. يكفي حتى الأربعاء.'}},
+ {id:'spinach',th:'babyspinach',en:'Spinach',ar:'سبانخ',uq:2,unit:{en:'Barakat baby spinach 175 g',ar:'سبانخ صغيرة بركات 175 غ'},price:9.25,kg:.175,act:'resize',to:{th:'spinach',unit:{en:'Local spinach 250 g',ar:'سبانخ محلية 250 غ'},price:4.5,kg:.25},why:{en:'About half of the two baby-spinach packs was thrown away in 3 of the last 4 weeks. One 250 g bunch covers tonight’s saloona for Dh 4.50.',ar:'نحو نصف عبوتي السبانخ الصغيرة رُمي في 3 من آخر 4 أسابيع. ربطة 250 غ تكفي صالونة الليلة بـ4.50 درهم.'}},
+ {id:'tomato',th:'tomato',en:'Tomatoes',ar:'طماطم',uq:2,unit:{en:'1 kg',ar:'1 كغ'},price:5.5,kg:1,act:'reduce',toQ:1,why:{en:'You already have 1 kg, good until Thursday.',ar:'لديك 1 كغ بالفعل، صالح حتى الخميس.'}},
+ {id:'laban',th:'laban',en:'Laban',ar:'لبن',uq:2,unit:{en:'2 L',ar:'2 لتر'},price:9.75,kg:2,act:'reduce',toQ:1,why:{en:'The second bottle expired unopened twice this month.',ar:'انتهت صلاحية العبوة الثانية دون فتح مرتين هذا الشهر.'}},
+ {id:'mango',th:'mango',en:'Mangoes',ar:'مانجو',uq:1,unit:{en:'1 kg',ar:'1 كغ'},price:12,kg:1,act:'remove',why:{en:'3 mangoes at home are still ripe.',ar:'3 حبات مانجو في المنزل ما زالت ناضجة.'}},
+ {id:'milk',th:'milk',en:'Milk',ar:'حليب',uq:1,unit:{en:'2 L',ar:'2 لتر'},price:11.5,kg:2,act:'keep'},
+ {id:'banana',th:'banana',en:'Bananas',ar:'موز',uq:1,unit:{en:'1 kg',ar:'1 كغ'},price:6.25,kg:1,act:'keep'},
+ {id:'yoghurt',th:'yoghurt',en:'Yoghurt',ar:'زبادي',uq:1,unit:{en:'1 kg',ar:'1 كغ'},price:8.5,kg:1,act:'keep'},
+ {id:'cucumberB',th:'cucumber',en:'Cucumbers',ar:'خيار',uq:1,unit:{en:'1 kg',ar:'1 كغ'},price:5.25,kg:1,act:'keep'}
+];
+const ADDS=[
+ {id:'loomi',th:'loomi',en:'Loomi (dried lime)',ar:'لومي',unit:{en:'100 g',ar:'100 غ'},price:6.5,kg:.1,act:'add',why:{en:'Needed for tonight’s saloona.',ar:'مطلوب لصالونة الليلة.'}},
+ {id:'bezar',th:'bezar',en:'Bezar spice mix',ar:'بزار',unit:{en:'50 g',ar:'50 غ'},price:5.75,kg:.05,act:'add',why:{en:'Needed for tonight’s saloona.',ar:'مطلوب لصالونة الليلة.'}}
+];
+const SPIN_OPTS={
+ barakat:{th:'babyspinach',unit:{en:'Barakat baby spinach 175 g',ar:'سبانخ صغيرة بركات 175 غ'},price:9.25,kg:.175},
+ skip:{th:'spinach',unit:{en:'Skipped this week',ar:'تم التخطي هذا الأسبوع'},price:0,kg:0},
+ usual:{th:'babyspinach',unit:{en:'2 × Barakat baby spinach 175 g',ar:'2 × سبانخ صغيرة بركات 175 غ'},price:18.5,kg:.35}
+};
+const STATS=[
+ {v:'40%',en:'of UAE residents say they often over-order food',ar:'من سكان الإمارات يقولون إنهم كثيراً ما يطلبون طعاماً أكثر من حاجتهم',tag:'i.official',src:'ne’ma, How the UAE Eats (6,000+ respondents)',url:'https://motivatevalmorgan.com/wp-content/uploads/2025/01/nema-How-the-UAE-Eats.pdf',th:'dish_saloona'},
+ {v:'Dh 6bn',en:'a year: about 40% of food in the UAE is wasted',ar:'سنوياً: نحو 40% من الطعام في الإمارات يُهدر',tag:'i.official',src:'The National, citing ne’ma',url:'https://www.thenationalnews.com/climate/cop28/2023/12/12/uae-residents-love-for-takeaway-food-is-creating-a-food-waste-problem/',th:'dish_machboos'},
+ {v:'36%',en:'name bread as their most-wasted item at home, then vegetables (34%) and fruit (31%)',ar:'يذكرون الخبز كأكثر ما يُهدر في المنزل، ثم الخضروات (34%) والفواكه (31%)',tag:'i.official',src:'ne’ma, How the UAE Eats',url:'https://motivatevalmorgan.com/wp-content/uploads/2025/01/nema-How-the-UAE-Eats.pdf',th:'khubz'},
+ {v:'38% → 60%',en:'of prepared food wasted daily in Dubai, rising to about 60% in Ramadan',ar:'من الطعام المُعدّ يُهدر يومياً في دبي، ويرتفع إلى نحو 60% في رمضان',tag:'i.est',src:'Dubai Carbon Centre of Excellence (2016 estimate)',url:'https://www.emirates247.com/news/emirates/shocking-38-of-food-prepared-every-day-is-wasted-says-dubai-carbon-2016-06-30-1.634600',th:'dates'},
+ {v:'2030',en:'UAE target to halve food loss and waste',ar:'هدف الإمارات لخفض فقد الطعام وهدره إلى النصف',tag:'i.official',src:'ne’ma, National Food Loss and Waste Initiative',url:'https://www.arabnews.pk/node/2592882',th:'spinach'},
+ {v:'60%',en:'of food waste worldwide happens in homes',ar:'من هدر الطعام عالمياً يحدث في المنازل',tag:'i.global',src:'Global studies, reported by Gulf News (2026)',url:'https://gulfnews.com/food/60-of-food-waste-comes-from-homes-uae-urges-action-1.500642577',th:'riceL'},
+ {v:'3–5 pm',en:'pre-iftar window: Careem’s highest order growth and largest baskets in Ramadan',ar:'فترة ما قبل الإفطار: أعلى نمو في طلبات Careem وأكبر السلال في رمضان',tag:'i.company',src:'Careem Ramadan trends, Campaign ME',url:'https://campaignme.com/careem-reveals-shifts-in-consumer-behaviour-preferences-spending-during-ramadan/',th:'dish_luqaimat'}
+];
+
+// usual restaurant order for 7 vs Kafi's order (example menu prices)
+const MENU=[
+ {id:'grill',th:'dish_grill',en:'Mixed grill platter',ar:'طبق مشاوي مشكلة',price:68,u:3,k:2,kg:.6},
+ {id:'machboosM',th:'dish_machboos',en:'Chicken machboos',ar:'مكبوس دجاج',price:38,u:3,k:2,kg:.55},
+ {id:'hummus',th:'dish_hummus',en:'Hummus',ar:'حمص',price:18,u:2,k:1,kg:.25},
+ {id:'fattoushM',th:'dish_fattoush',en:'Fattoush',ar:'فتوش',price:22,u:2,k:1,kg:.3},
+ {id:'fries',th:'dish_fries',en:'Fries',ar:'بطاطا مقلية',price:14,u:3,k:1,kg:.2},
+ {id:'kunafa',th:'dish_kunafa',en:'Kunafa',ar:'كنافة',price:32,u:1,k:1,kg:.4}
+];
+const SURPLUS=[
+ {id:'laban',q:{en:'1 × 2 L, unopened · 4 days left',ar:'1 × 2 لتر، غير مفتوح · 4 أيام متبقية'},kg:2},
+ {id:'khubz',q:{en:'1 sealed pack · 2 days left',ar:'كيس مغلق · يومان متبقيان'},kg:.4},
+ {id:'dates',q:{en:'Sealed 1 kg box',ar:'علبة مغلقة 1 كغ'},kg:1}
+];
+
+/* ---------- state ---------- */
+const S={lang:'en',view:'twin',stage:'now',layers:{fresh:true,soon:true,leftover:true,incoming:true},xray:false,sep:false,panel:null,
+ foodOrder:'draft',box:'draft',surplus:{laban:true,khubz:true,dates:false},autopilot:false,limit:60,autoDone:false,photoMode:'fridge',
+ cb:{hh:10000,spend:600,s0:25,s1:40,cut:10},
+ m:{a:4,e:1,k:2,g:0},appetite:1,ramadan:false,added:false,spinach:null,order:'draft',checkin:null,
+ learn:[34,29,27,22,18,15,12,9],weekly:[7.8,7.1,6.6,5.9,5.2,4.8,4.4,4.1],saved:{kg:6.4,aed:148},orders:13,
+ finished:{},events:[],audit:[],auditFilter:'all',booted:false};
+try{const l=localStorage.getItem('kafi.lang');if(l==='ar'||l==='en')S.lang=l;}catch(e){}
+
+function stateOf(it){
+  if(S.finished[it.id]) return 'gone';
+  if(S.stage==='acts'||S.stage==='saved'){if(PLAN_TONIGHT.includes(it.id)||PLAN_TMRW.includes(it.id)) return 'plan';}
+  if(it.lo) return 'leftover';
+  if(it.left<=1) return 'exp';
+  if(it.left<=2) return 'soon';
+  return 'fresh';
+}
+const layerOf=it=>it.lo?'leftover':(it.left<=2?'soon':'fresh');
+const COLORS={fresh:'#4BBF88',soon:'#E6B449',exp:'#EE6A51',leftover:'#A68AEA',plan:'#4FC0DA',incoming:'#4FC0DA'};
+function leftTxt(it){const n=it.left;if(n>=30) return S.lang==='ar'?'صالح لفترة طويلة':'keeps for weeks';return n+' '+(n===1?t('day'):t('days'));}
+const nameOf=id=>{const i=ITEMS.find(x=>x.id===id)||INCOMING.find(x=>x.id===id);return i?L(i):id;};
+
+/* ---------- 3D food models (shared by the twin and the thumbnails) ---------- */
+const HAS3D=!!window.THREE;
+const MAT={};
+function mat(c,o){const k=c+JSON.stringify(o||{});return MAT[k]||(MAT[k]=new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.55,metalness:0},o||{})));}
+function rng(s){let x=7;for(const c of s)x=(x*31+c.charCodeAt(0))>>>0;return()=>((x=(x*1664525+1013904223)>>>0)/4294967296);}
+function bowlGeo(r,h){const V=(a,b)=>new THREE.Vector2(a,b);return new THREE.LatheGeometry([V(0,0),V(r*.5,0),V(r*.62,.006),V(r*.86,h*.38),V(r,h),V(r*.93,h),V(r*.8,h*.42),V(r*.5,h*.1),V(0,h*.1)],32);}
+function food(id){
+  const g=new THREE.Group(),R=rng(id);
+  const A=(geo,m,p,r,s)=>{const me=new THREE.Mesh(geo,m);if(p)me.position.set(p[0],p[1],p[2]);if(r)me.rotation.set(r[0],r[1],r[2]);if(s)me.scale.set(s[0],s[1],s[2]);me.castShadow=true;me.receiveShadow=true;g.add(me);return me;};
+  const sph=(r,w,h)=>new THREE.SphereGeometry(r,w||18,h||14),cyl=(a,b,h,n)=>new THREE.CylinderGeometry(a,b,h,n||24),bx=(x,y,z)=>new THREE.BoxGeometry(x,y,z);
+  const GLASS=mat('#ffffff',{transparent:true,opacity:.08,roughness:.05,depthWrite:false});
+  const CER=mat('#f1ede4',{roughness:.35,side:THREE.DoubleSide});
+  const leaf=(c,p,ry,rz,s)=>A(sph(.05,12,8),mat(c,{roughness:.5}),p,[0,ry,rz],s||[1,.22,1.9]);
+  switch(id){
+    case 'chicken':
+      A(bx(.38,.035,.27),mat('#f4f2ec',{roughness:.8}),[0,.018,0]);
+      for(let i=0;i<3;i++) A(sph(.07),mat(i%2?'#e08b72':'#d97b62',{roughness:.42}),[-.11+i*.11,.06,(i%2?.035:-.03)],[0,i*.8,0],[1.25,.5,.95]);
+      A(bx(.39,.09,.28),GLASS,[0,.045,0]);A(bx(.11,.003,.07),mat('#cf3a2c'),[.11,.091,.08]);break;
+    case 'saloonaL': case 'riceL':{
+      A(bowlGeo(.17,.12),mat('#2f6f63',{roughness:.25,side:THREE.DoubleSide}),[0,0,0]);
+      if(id==='riceL'){A(sph(.15,24,12,0),mat('#f6efdc',{roughness:.9}),[0,.06,0],null,[1,.42,1]);for(let i=0;i<14;i++){const a=R()*6.28,r=R()*.11;A(sph(.008,6,4),mat(i%3?'#e8b54a':'#d4882a'),[Math.cos(a)*r,.1+R()*.01,Math.sin(a)*r]);}}
+      else{A(cyl(.15,.15,.012),mat('#b5562a',{roughness:.35}),[0,.085,0]);for(let i=0;i<8;i++){const a=R()*6.28,r=R()*.1;A(sph(.025,8,6),mat(i%3?'#d98b4a':'#3f7a2e'),[Math.cos(a)*r,.092,Math.sin(a)*r],null,[1,.6,1]);}}
+      break;}
+    case 'spinach': case 'rocca':
+      for(let i=0;i<9;i++){const a=i/9*6.28;leaf(i%2?'#1f6b2a':'#2e8a37',[Math.cos(a)*.05,.04+R()*.08,Math.sin(a)*.05],a,.5+R()*.4);}
+      for(let i=0;i<5;i++) A(cyl(.006,.006,.12,6),mat('#7fb36a'),[(R()-.5)*.05,.02,(R()-.5)*.05],[1.3,0,R()]);
+      A(cyl(.02,.02,.02,10),mat('#c9452e'),[0,.012,.05],[Math.PI/2,0,0]);break;
+    case 'babyspinach':
+      A(bx(.26,.1,.18),mat('#ffffff',{transparent:true,opacity:.22,roughness:.05,depthWrite:false}),[0,.05,0]);
+      for(let i=0;i<12;i++) leaf(i%2?'#3a8f3d':'#4aa24a',[(R()-.5)*.2,.03+R()*.05,(R()-.5)*.12],R()*6,R()*.6,[.7,.2,1.1]);
+      A(bx(.2,.004,.08),mat('#1f6b3a'),[0,.101,0]);A(bx(.08,.005,.04),mat('#f2c230'),[.05,.104,0]);break;
+    case 'coriander':
+      for(let i=0;i<10;i++){const x=(R()-.5)*.05,z=(R()-.5)*.05;A(cyl(.004,.004,.2,5),mat('#79b25c'),[x,.1,z],[R()*.2,0,(R()-.5)*.3]);A(sph(.035,8,6),mat(i%2?'#4f9e3d':'#62b24b',{roughness:.6}),[x*2,.2+R()*.04,z*2],null,[1,.5,1]);}
+      A(cyl(.02,.02,.012,10),mat('#2a6fd1'),[0,.06,0]);break;
+    case 'tomato':
+      [[0,0],[.13,.02],[.06,.11]].forEach((p,i)=>{A(sph(.068),mat(i===1?'#c9301f':'#dc3d26',{roughness:.28}),[p[0],.06,p[1]],null,[1,.86,1]);A(new THREE.ConeGeometry(.025,.02,5),mat('#3c7a2a'),[p[0],.118,p[1]]);});break;
+    case 'cucumber':
+      for(let i=0;i<3;i++){const z=-.06+i*.06;A(cyl(.03,.03,.24,14),mat(i%2?'#3a7429':'#447f30',{roughness:.6}),[0,.03+(i===1?.05:0),z],[0,0,Math.PI/2]);[-.12,.12].forEach(x=>A(sph(.03,10,8),mat('#3a7429'),[x,.03+(i===1?.05:0),z]));}break;
+    case 'lemon':
+      [[0,0],[.1,.03],[.04,.1],[.14,.11]].forEach(p=>A(sph(.045),mat('#f0d43a',{roughness:.45}),[p[0],.04,p[1]],[0,R()*3,0],[1.28,1,1]));break;
+    case 'laban': case 'milk':{
+      const cap=id==='laban'?'#2f8f4a':'#2a6fd1',band=id==='laban'?'#e5f2e8':'#e6effb';
+      A(cyl(.075,.08,.3,24),mat('#f9f8f4',{roughness:.3}),[0,.15,0]);A(sph(.075,24,12),mat('#f9f8f4',{roughness:.3}),[0,.3,0],null,[1,.5,1]);
+      A(cyl(.032,.034,.05,16),mat(cap,{roughness:.4}),[0,.345,0]);A(cyl(.081,.081,.12,24),mat(band),[0,.14,0]);A(cyl(.082,.082,.03,24),mat(cap),[0,.17,0]);
+      A(bx(.03,.08,.06),mat('#f9f8f4',{roughness:.3}),[.08,.2,0]);break;}
+    case 'yoghurt':
+      A(cyl(.1,.085,.13,28),mat('#fbfaf6',{roughness:.3}),[0,.065,0]);A(cyl(.105,.105,.016,28),mat('#e7a93a',{roughness:.35}),[0,.138,0]);A(cyl(.101,.09,.05,28),mat('#3a6fc9'),[0,.06,0]);break;
+    case 'labneh':
+      A(cyl(.07,.07,.12,24),GLASS,[0,.06,0]);A(cyl(.064,.064,.1,24),mat('#f4efe2',{roughness:.7}),[0,.052,0]);A(cyl(.074,.074,.03,24),mat('#c8332b',{roughness:.3,metalness:.3}),[0,.13,0]);break;
+    case 'eggs':
+      A(bx(.34,.06,.2),mat('#cbb99c',{roughness:.95}),[0,.03,0]);
+      for(let i=0;i<10;i++){A(sph(.033,12,10),mat(i%3?'#f1e4cc':'#e9d6b6',{roughness:.6}),[-.13+(i%5)*.065,.075,i<5?-.045:.045],null,[1,1.25,1]);}break;
+    case 'halloumi':
+      A(bx(.2,.06,.13),mat('#f4efe0',{roughness:.6}),[0,.03,0]);A(bx(.205,.062,.05),mat('#2a5fae'),[0,.03,0]);A(bx(.07,.063,.051),mat('#f2c230'),[.05,.03,0]);break;
+    case 'rice':
+      A(bx(.3,.42,.17),mat('#f3eee0',{roughness:.85}),[0,.21,0]);A(bx(.302,.14,.172),mat('#b3302b'),[0,.22,0]);A(bx(.12,.06,.173),mat('#e8c35a'),[0,.22,0]);
+      A(new THREE.ConeGeometry(.08,.08,4),mat('#f3eee0',{roughness:.85}),[0,.45,0],[0,Math.PI/4,0]);break;
+    case 'onion':
+      [[0,0],[.1,.03],[.05,.1]].forEach(p=>{A(sph(.055),mat('#a8642f',{roughness:.5}),[p[0],.05,p[1]],null,[1,.9,1]);A(new THREE.ConeGeometry(.018,.04,8),mat('#c9965a'),[p[0],.11,p[1]]);});break;
+    case 'khubz': case 'dish_bread':
+      for(let i=0;i<5;i++) A(cyl(.13,.13,.012,30),mat(i%2?'#d8a964':'#ddb173',{roughness:.85}),[(R()-.5)*.02,.008+i*.013,(R()-.5)*.02]);
+      for(let i=0;i<10;i++){const a=R()*6.28,r=R()*.11;A(sph(.012,6,4),mat('#b87a3c'),[Math.cos(a)*r,.072,Math.sin(a)*r],null,[1.4,.2,1]);}
+      if(id==='khubz') A(bx(.3,.09,.3),GLASS,[0,.045,0]);break;
+    case 'dates':
+      A(bx(.26,.06,.17),mat('#c79a3a',{metalness:.5,roughness:.35}),[0,.03,0]);
+      for(let i=0;i<12;i++) A(sph(.022,10,8),mat(i%2?'#5a2a12':'#6e3417',{roughness:.3}),[-.1+(i%4)*.066,.07,-.05+Math.floor(i/4)*.05],[0,.3,0],[1,.85,1.7]);break;
+    case 'banana':
+      for(let i=0;i<4;i++){const b=A(new THREE.TorusGeometry(.11,.022,8,22,Math.PI*.55),mat(i%2?'#efcf3e':'#f2d64e',{roughness:.5}),[0,.06+i*.012,(i-1.5)*.035],[Math.PI/2,0,Math.PI*.2+i*.05]);}
+      A(cyl(.012,.012,.05,6),mat('#6b5a2a'),[.02,.08,0],[0,0,1.2]);break;
+    case 'mango':
+      A(sph(.07),mat('#f2a63a',{roughness:.4}),[0,.06,0],[0,0,.3],[1,.82,1.3]);A(sph(.07),mat('#e8742e',{roughness:.4}),[.12,.06,.04],[0,1,.2],[1,.82,1.3]);A(sph(.07),mat('#f4b843',{roughness:.4}),[.05,.06,.13],[0,2,.2],[1,.82,1.3]);break;
+    case 'cardamom':
+      A(cyl(.06,.06,.14,20),GLASS,[0,.07,0]);for(let i=0;i<14;i++) A(sph(.012,6,4),mat('#8fae5a'),[(R()-.5)*.07,.02+R()*.09,(R()-.5)*.07],null,[1,1,1.8]);A(cyl(.064,.064,.025,20),mat('#c9a45c',{metalness:.7,roughness:.3}),[0,.15,0]);break;
+    case 'loomi':
+      A(bx(.18,.1,.12),GLASS,[0,.05,0]);for(let i=0;i<6;i++) A(sph(.032,12,8),mat(i%2?'#7a4a22':'#8a5a2b',{roughness:.7}),[(R()-.5)*.11,.035+R()*.03,(R()-.5)*.06]);break;
+    case 'bezar':
+      A(cyl(.055,.055,.12,20),GLASS,[0,.06,0]);A(cyl(.05,.05,.09,20),mat('#9a4a24',{roughness:.9}),[0,.047,0]);A(cyl(.058,.058,.025,20),mat('#1f4a3f'),[0,.13,0]);break;
+    case 'dish_saloona':
+      A(bowlGeo(.2,.13),CER);A(cyl(.18,.18,.012),mat('#b5562a',{roughness:.3}),[0,.095,0]);
+      for(let i=0;i<10;i++){const a=R()*6.28,r=R()*.13;A(sph(i%3?.03:.02,8,6),mat(i%3?'#d48b4c':'#2f7d32'),[Math.cos(a)*r,.105,Math.sin(a)*r],null,[1,.6,1]);}break;
+    case 'dish_machboos':
+      A(cyl(.25,.22,.025,36),mat('#e9e2d2',{roughness:.3}),[0,.012,0]);A(sph(.2,28,14),mat('#e7bf6e',{roughness:.85}),[0,.02,0],null,[1,.38,1]);
+      for(let i=0;i<4;i++){const a=i/4*6.28+.4;A(sph(.05,10,8),mat('#a85c2a',{roughness:.45}),[Math.cos(a)*.08,.09,Math.sin(a)*.08],null,[1.3,.6,1]);}
+      for(let i=0;i<10;i++){const a=R()*6.28,r=R()*.15;A(sph(.01,6,4),mat(i%2?'#f2e6c9':'#4a2a14'),[Math.cos(a)*r,.07,Math.sin(a)*r]);}break;
+    case 'dish_fattoush':
+      A(bowlGeo(.2,.12),CER);
+      for(let i=0;i<14;i++){const a=R()*6.28,r=R()*.13;leaf(i%2?'#4aa24a':'#6dbb4f',[Math.cos(a)*r,.08+R()*.03,Math.sin(a)*r],R()*6,R(),[.8,.2,1.3]);}
+      for(let i=0;i<7;i++){const a=R()*6.28,r=R()*.12;A(bx(.03,.03,.03),mat(i%2?'#d93a26':'#8bc06a'),[Math.cos(a)*r,.11,Math.sin(a)*r],[R(),R(),0]);}
+      for(let i=0;i<5;i++){const a=R()*6.28,r=R()*.1;A(bx(.05,.008,.04),mat('#d9a35c'),[Math.cos(a)*r,.125,Math.sin(a)*r],[R(),R(),R()]);}break;
+    case 'dish_luqaimat':
+      A(cyl(.2,.18,.02,36),mat('#f4f1ea',{roughness:.3}),[0,.01,0]);
+      for(let i=0;i<11;i++){const a=i*2.4,r=.04+.11*Math.sqrt(i/11);A(sph(.035,14,10),mat(i%2?'#d99a3a':'#e0a648',{roughness:.35}),[Math.cos(a)*r,.05+(i<3?.04:0),Math.sin(a)*r]);}
+      for(let i=0;i<4;i++) A(new THREE.TorusGeometry(.06+i*.03,.004,6,30,Math.PI*1.2),mat('#6a2c0f',{roughness:.2}),[0,.09,0],[Math.PI/2,0,i]);break;
+    case 'dish_grill':
+      A(cyl(.26,.24,.02,36),mat('#f4f1ea',{roughness:.3}),[0,.01,0]);
+      for(let s=0;s<3;s++){const z=-.09+s*.09;A(cyl(.005,.005,.42,6),mat('#b9c0bd',{metalness:.9,roughness:.2}),[0,.05,z],[0,0,Math.PI/2]);
+        for(let i=0;i<5;i++) A(bx(.05,.045,.045),mat(i%2?'#7a3e1d':'#8f4a22',{roughness:.5}),[-.13+i*.065,.05,z],[R()*.4,R(),0]);}
+      [[.17,.1],[-.17,-.12],[.16,-.13]].forEach(p=>A(sph(.03),mat('#d6402a',{roughness:.3}),[p[0],.04,p[1]],null,[1,.8,1]));
+      for(let i=0;i<6;i++) leaf('#3f9443',[(R()-.5)*.4,.03,(R()-.5)*.3],R()*6,0,[.4,.15,.7]);break;
+    case 'dish_hummus':
+      A(bowlGeo(.17,.07),CER);A(cyl(.15,.15,.02,32),mat('#e1c08a',{roughness:.6}),[0,.05,0]);
+      A(new THREE.TorusGeometry(.07,.008,8,32),mat('#c9a020',{roughness:.1}),[0,.062,0],[Math.PI/2,0,0]);
+      for(let i=0;i<7;i++){const a=R()*6.28,r=R()*.05;A(sph(.012,8,6),mat('#d4ad62'),[Math.cos(a)*r,.065,Math.sin(a)*r]);}
+      for(let i=0;i<10;i++){const a=R()*6.28,r=.06+R()*.06;A(sph(.005,6,4),mat('#b8321e'),[Math.cos(a)*r,.062,Math.sin(a)*r]);}break;
+    case 'dish_fries':
+      A(bx(.17,.14,.11),mat('#c8332b',{roughness:.5}),[0,.07,0]);A(bx(.171,.03,.111),mat('#f2f0ea'),[0,.11,0]);
+      for(let i=0;i<16;i++) A(bx(.018,.16,.018),mat(i%3?'#efc14a':'#e4ad35',{roughness:.6}),[(R()-.5)*.13,.16+R()*.03,(R()-.5)*.07],[(R()-.5)*.4,0,(R()-.5)*.4]);break;
+    case 'dish_kunafa':
+      A(cyl(.21,.21,.03,36),mat('#c9a45c',{metalness:.8,roughness:.3}),[0,.015,0]);A(cyl(.19,.19,.045,36),mat('#dd7d28',{roughness:.55}),[0,.05,0]);
+      for(let i=0;i<30;i++){const a=R()*6.28,r=R()*.17;A(sph(.008,6,4),mat('#7fae3f'),[Math.cos(a)*r,.075,Math.sin(a)*r]);}break;
+    default: A(sph(.08),mat('#888'),[0,.08,0]);
+  }
+  return g;
+}
+const THUMB={};
+function makeThumbs(){
+  if(!HAS3D) return;
+  let r;try{r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});}catch(e){return;}
+  r.setPixelRatio(1);r.setSize(220,220);r.outputEncoding=THREE.sRGBEncoding;
+  const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight('#ffffff','#8a7a64',.5));
+  const d=new THREE.DirectionalLight('#fff1dc',.85);d.position.set(2.5,4,3);sc.add(d);
+  const d2=new THREE.DirectionalLight('#d4e8ff',.3);d2.position.set(-3,2,-2);sc.add(d2);
+  const cam=new THREE.PerspectiveCamera(28,1,.01,50);
+  const ids=[...ITEMS.map(i=>i.id),'loomi','bezar','babyspinach','dish_saloona','dish_machboos','dish_fattoush','dish_bread','dish_luqaimat','dish_grill','dish_hummus','dish_fries','dish_kunafa'];
+  ids.forEach(id=>{
+    const g=food(id);sc.add(g);
+    const box=new THREE.Box3().setFromObject(g),s=box.getSize(new THREE.Vector3()),c=box.getCenter(new THREE.Vector3());
+    const R=Math.max(s.x,s.y*1.1,s.z)*.86;
+    cam.position.set(c.x+R*1.35,c.y+R*1.25,c.z+R*1.95);cam.lookAt(c.x,c.y-s.y*.05,c.z);
+    r.render(sc,cam);THUMB[id]=r.domElement.toDataURL('image/png');sc.remove(g);
+  });
+  r.dispose();
+}
+try{makeThumbs();}catch(e){}
+function thumb(id,cls){const src=THUMB[id];return `<span class="th ${cls||''}">${src?`<img src="${src}" alt="">`:`<i style="background:var(--accent);opacity:.3"></i>`}</span>`;}
+const miniImg=id=>THUMB[id]?`<img src="${THUMB[id]}" alt="">`:'';
+
+/* ---------- heartbeat ---------- */
+class Heart{
+  constructor(c,col,n){this.c=c;this.x=c.getContext('2d');this.n=n||140;this.d=new Array(this.n).fill(0);this.q=[];this.col=col;}
+  beat(a){a=a||1;const w=[0,.06,.12,.05,0,-.12,1,-.38,0,.02,.1,.2,.24,.16,.05,0];this.q.push(...w.map(v=>v*a));}
+  step(){const v=this.q.length?this.q.shift():(Math.random()-.5)*.025;this.d.push(v);this.d.shift();}
+  draw(){
+    const c=this.c,x=this.x,w=c.clientWidth,h=c.clientHeight;if(!w||!h) return;
+    const dpr=Math.min(2,window.devicePixelRatio||1);
+    if(c.width!==Math.round(w*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);}
+    x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,w,h);
+    const col=typeof this.col==='function'?this.col():this.col;
+    const gr=x.createLinearGradient(0,0,w,0);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(.35,col);gr.addColorStop(1,col);
+    x.lineWidth=1.6;x.strokeStyle=gr;x.lineJoin='round';x.beginPath();
+    let px=0,py=0;
+    this.d.forEach((v,i)=>{px=i/(this.n-1)*w;py=h*.62-v*h*.52;i?x.lineTo(px,py):x.moveTo(px,py);});
+    x.stroke();x.fillStyle=col;x.beginPath();x.arc(px-1,py,2.4,0,7);x.fill();
+  }
+}
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let accentCol=cssv('--accent');
+const hearts=[];
+hearts.push(new Heart($('#beatTop'),()=>accentCol,90));
+const agentHearts={};
+let bigHeart=null;
+function now(){return new Date().toTimeString().slice(0,5);}
+function beat(agent,msg,amp){
+  hearts.forEach(h=>h.beat(amp));
+  if(agentHearts[agent]) agentHearts[agent].beat(1.2);
+  S.events.unshift({time:now(),agent,msg});
+  if(S.events.length>40) S.events.pop();
+  if(S.view==='home') renderEvents();
+  if(S.panel==='agents') renderPanel();
+}
+function call(agent,tool,mut,why,status){
+  const e={time:now(),agent,tool,mut:!!mut,why,status:status||(mut?'done':'read')};
+  S.audit.unshift(e);if(S.audit.length>80) S.audit.pop();
+  beat(agent,why,mut?1.25:.8);
+  renderTrace();if(S.view==='audit') renderAudit();
+  return e;
+}
+
+/* ---------- nav ---------- */
+const ICON={
+ twin:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+ home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+ kitchen:'<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M6 10h12M9 6v2M9 13v3"/>',
+ cook:'<path d="M4 11h16v3a6 6 0 01-6 6h-4a6 6 0 01-6-6z"/><path d="M2 11h20M9 4c0 2 2 2 2 4M14 4c0 2 2 2 2 4"/>',
+ basket:'<path d="M3 9h18l-2 11H5z"/><path d="M8 9l4-6 4 6"/>',
+ leftovers:'<path d="M4 12a8 8 0 0114-5.3L20 9M20 4v5h-5"/><path d="M20 12a8 8 0 01-14 5.3L4 15M4 20v-5h5"/>',
+ pulse:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+ insights:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+ approvals:'<path d="M20 6L9 17l-5-5"/>',
+ audit:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ trust:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+ sources:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+ orderin:'<path d="M5 11h14l-1.2 9H6.2z"/><path d="M9 11V8a3 3 0 016 0v3"/>',
+ careem:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>'
+};
+const NAV=[['g.household',['twin','home','kitchen','cook','basket','orderin','leftovers']],['g.impact',['pulse','careem','insights']],['g.assurance',['approvals','audit','trust','sources']]];
+function renderNav(){
+  const ap=approvalsList().length;
+  $('#navList').innerHTML=NAV.map(([g,items])=>`<div class="nav-group"><span class="eyebrow">${t(g)}</span>${items.map(v=>`<a href="#${v}" data-go="${v}" class="${S.view===v?'on':''}"><svg viewBox="0 0 24 24">${ICON[v]}</svg><span>${t('n.'+v)}</span>${v==='approvals'&&ap?`<span class="count">${ap}</span>`:''}</a>`).join('')}</div>`).join('');
+  $('#apDot').textContent=ap;$('#apDot').hidden=!ap;
+}
+const VIEWS=['twin','home','kitchen','cook','basket','orderin','leftovers','pulse','careem','insights','approvals','audit','trust','sources'];
+function go(v){
+  if(!VIEWS.includes(v)) v='twin';
+  S.view=v;
+  $$('section[data-view]').forEach(s=>s.hidden=s.dataset.view!==v);
+  try{history.replaceState(null,'','#'+v);}catch(e){}
+  $('#nav').classList.remove('open');
+  renderNav();render(v);
+  $('#view').scrollTop=0;
+  if(v==='twin'){Twin.resize();if(!S.booted) Twin.boot();}
+}
+function render(v){({home:renderHome,kitchen:renderKitchen,cook:renderCook,basket:renderBasket,orderin:renderOrderin,careem:renderCareem,leftovers:renderLeftovers,pulse:renderPulse,insights:renderInsights,approvals:renderApprovals,audit:renderAudit,trust:renderTrust,sources:renderSources,twin:renderTwinUI})[v]?.();}
+function head(v,lede,extra){return `<div class="page-head"><p class="eyebrow">${t('n.'+v)}</p><h1>${t('q.'+v)}</h1>${lede?`<p class="lede">${lede}</p>`:''}${extra||''}</div>`;}
+function i18nStatic(){
+  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
+  $$('[data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));
+  $('#langBtn').textContent=t('lang');
+}
+
+/* ---------- pages ---------- */
+function approvalsList(){
+  const a=[];
+  if(S.order!=='placed') a.push({title:t('ap.basket'),sub:aed(kafiTotal())+' · '+t('b.store'),go:'basket',th:'babyspinach'});
+  if(S.checkin===null) a.push({title:t('ap.check'),sub:t('ap.check.s'),go:'leftovers',th:'riceL'});
+  return a;
+}
+function renderHome(){
+  const exp=ITEMS.filter(i=>!i.lo&&i.left<=2&&!S.finished[i.id]);
+  const lo=ITEMS.filter(i=>i.lo);
+  const ap=approvalsList();
+  const date=new Date().toLocaleDateString(S.lang==='ar'?'ar-AE':'en-GB',{weekday:'long',day:'numeric',month:'long'});
+  $('#v-home').innerHTML=`
+  <div class="card hero">
+    <div><p class="eyebrow">${date} · ${t('hh.where')}</p><h1>${t('h.greet')}. ${t('q.home')}</h1><p class="sum">${t('h.sum')}</p>
+      <div class="row"><button class="btn pri" data-go="cook">${t('h.cook')}</button><button class="btn" data-go="basket">${t('h.basket')}</button></div></div>
+    <div class="hero-plate">${thumb('spinach','s96')}${thumb('dish_saloona','s96')}${thumb('riceL','s96')}</div>
+  </div>
+  <div class="grid g4">
+    <div class="card stat bad"><span class="eyebrow">${t('h.exp')}</span><div class="v num">${exp.length}</div><div class="s">${t('h.exp.s')}</div></div>
+    <div class="card stat warn"><span class="eyebrow">${t('h.wait')}</span><div class="v num">${ap.length}</div><div class="s">${t('h.wait.s')}</div></div>
+    <div class="card stat"><span class="eyebrow">${t('h.left')}</span><div class="v num" style="color:var(--leftover)">${lo.length}</div><div class="s">${t('h.left.s')}</div></div>
+    <div class="card stat good"><span class="eyebrow">${t('h.saved')}</span><div class="v num">${aed(S.saved.aed).replace('.00','')}</div><div class="s">${fmt(S.saved.kg,1)} ${t('kg')}</div></div>
+  </div>
+  <div class="sec-head"><h2>${t('k.usefirst')}</h2><button class="btn" data-go="kitchen">${t('n.kitchen')}</button></div>
+  <div class="usefirst">${exp.concat(lo).sort((a,b)=>a.left-b.left).map(i=>`<div class="fcard">${thumb(i.id)}<span class="pill p-${stateOf(i)}">${t('s.'+stateOf(i))}</span><b>${L(i)}</b><span class="d">${L(i.q)} · ${leftTxt(i)}</span></div>`).join('')}</div>
+  <div class="grid g2">
+    <div class="card"><div class="sec-head"><h2>${t('h.next')}</h2></div><div class="list">
+      ${[['cook','h.cook','h.cook.s','dish_saloona'],['basket','h.basket','h.basket.s','babyspinach'],['orderin','h.order','h.order.s','dish_grill'],['leftovers','h.check','h.check.s','riceL']].map(([v,a,b,th])=>`<div class="li">${thumb(th,'s48')}<div class="grow"><div class="t">${t(a)}</div><div class="d">${t(b)}</div></div><button class="btn" data-go="${v}">${t('open')}</button></div>`).join('')}
+    </div></div>
+    <div class="card"><div class="sec-head"><div><h2>${t('h.today')}</h2><p>${t('h.today.s')}</p></div></div><div class="events" id="evList"></div></div>
+  </div>`;
+  renderEvents();
+}
+function renderEvents(){
+  const el=$('#evList');if(!el) return;
+  el.innerHTML=S.events.slice(0,8).map(e=>`<div class="ev"><time>${e.time}</time><i style="background:${AGENTS[e.agent].col}"></i><div>${L(e.msg)}<small>${L(AGENTS[e.agent])}</small></div></div>`).join('');
+}
+function foodTile(i){
+  const st=stateOf(i),gone=st==='gone';const pct=Math.max(5,Math.min(100,i.left/7*100));
+  return `<button class="food ${st}" data-act="finish" data-id="${i.id}" ${gone?'style="opacity:.4"':''}>${thumb(i.id)}${st!=='fresh'&&!gone?`<span class="tag" style="background:var(--${st})"></span>`:''}<b>${L(i)}</b><span>${L(i.q)} · ${gone?t('s.gone'):leftTxt(i)}</span><div class="bar"><i style="width:${gone?0:pct}%;background:var(--${gone?'muted':st})"></i></div></button>`;
+}
+function renderKitchen(){
+  const vis=i=>S.layers[layerOf(i)];
+  const shelves=(z,n)=>Array.from({length:n},(_,k)=>n-1-k).map(s=>`<div class="shelf">${ITEMS.filter(i=>i.z===z&&i.s===s&&vis(i)).map(foodTile).join('')||'<span class="small muted">—</span>'}</div>`).join('');
+  const first=ITEMS.filter(i=>(i.left<=2||i.lo)&&!S.finished[i.id]).sort((a,b)=>a.left-b.left);
+  const cnt=z=>ITEMS.filter(i=>i.z===z).length;
+  $('#v-kitchen').innerHTML=head('kitchen',t('k.lede'))+`
+  <div class="row" style="justify-content:space-between">
+    <div class="filters">${['fresh','soon','leftover'].map(l=>`<button class="fchip" data-act="layer" data-l="${l}" aria-pressed="${S.layers[l]}"><i style="background:var(--${l})"></i>${t('ly.'+l)}</button>`).join('')}</div>
+    <button class="btn" data-act="photo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>${t('k.scan')}</button>
+  </div>
+  <p class="small muted" id="scanNote">${t('k.scan.note')}</p>
+  <div class="card" style="padding:14px 18px"><p class="eyebrow" style="margin-bottom:10px">${t('k.mem')}</p><div class="grid g4" style="gap:10px">
+    ${[['k.m1','k.m1s','p-fresh',''],['k.m2','k.m2s','p-plan','photo'],['k.m3','k.m3s','p-soon','receipt'],['k.m4','k.m4s','p-muted','']].map(([a,b,p,act])=>`<div style="display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)"><span class="pill ${p}" style="align-self:flex-start">${t(a)}</span><span class="small muted">${t(b)}</span>${act==='receipt'?`<button class="btn" style="margin-top:6px;padding:6px 10px;font-size:.8rem;align-self:flex-start" data-act="receipt">${t('k.receipt')}</button>`:''}</div>`).join('')}
+  </div></div>
+  <div class="kit">
+    <div class="appl"><div class="appl-h"><h2>${t('fridge')}</h2><span class="small muted">${cnt('f')} ${t('k.items')} · ${t('example')}</span></div><div class="appl-in">${shelves('f',4)}</div></div>
+    <div class="grid" style="align-content:start">
+      <div class="appl wood"><div class="appl-h"><h2>${t('pantry')}</h2><span class="small muted">${cnt('p')} ${t('k.items')}</span></div><div class="appl-in">${shelves('p',3)}</div></div>
+      <div class="card"><h2 style="margin-bottom:6px">${t('k.usefirst')}</h2><div class="list">${first.map(i=>`<div class="li">${thumb(i.id,'s40')}<div class="grow"><div class="t">${L(i)}</div><div class="d">${L(i.q)} · ${leftTxt(i)}</div></div><span class="pill p-${stateOf(i)}">${t('s.'+stateOf(i))}</span></div>`).join('')}</div></div>
+    </div>
+  </div>`;
+}
+function need(d){const m=S.m;const raw=(m.a*d.per.a+m.e*d.per.e+m.k*d.per.k+m.g*d.per.a)*S.appetite*d.learn*(S.ramadan?1.08:1);return d.u==='g'?Math.round(raw/10)*10:Math.ceil(raw);}
+function usualFor(d){const p=S.m.a+S.m.e+S.m.k+S.m.g;const v=d.usual*Math.max(1,p/7);return d.u==='g'?Math.round(v/10)*10:Math.ceil(v);}
+function riskCalc(){let left=0,tot=0;DISHES.forEach(d=>{const n=need(d)*d.gpu,u=usualFor(d)*d.gpu;left+=Math.max(0,u-n);tot+=u;});const usual=Math.round(left/tot*100);const last=S.learn[S.learn.length-1];return {usual:Math.max(usual,0),kafi:Math.max(4,Math.min(usual,Math.round(last*.9)))};}
+function gauge(r){
+  const W=240,H=140,cx=120,cy=120,R=92;const ang=p=>Math.PI*(1-Math.min(60,p)/60);const pt=(p,rr)=>[cx+rr*Math.cos(ang(p)),cy-rr*Math.sin(ang(p))];
+  const arc=(a,b,col)=>{const [x1,y1]=pt(a,R),[x2,y2]=pt(b,R);return `<path d="M${x1} ${y1} A${R} ${R} 0 0 1 ${x2} ${y2}" stroke="${col}" stroke-width="14" fill="none"/>`;};
+  const [nx,ny]=pt(r.kafi,R-26),[ux,uy]=pt(r.usual,R+4),[ux2,uy2]=pt(r.usual,R-16);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('c.risk')}">${arc(0,15,'var(--fresh)')}${arc(15,30,'var(--soon)')}${arc(30,60,'var(--exp)')}<line x1="${ux}" y1="${uy}" x2="${ux2}" y2="${uy2}" stroke="var(--ink)" stroke-width="2" stroke-dasharray="3 2"/><line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="6" fill="var(--ink)"/><text x="20" y="${H-2}">0%</text><text x="${W-36}" y="${H-2}">60%</text></svg>`;
+}
+function renderCook(){
+  const r=riskCalc();const mem=[['a','m.adults'],['e','m.elders'],['k','m.kids'],['g','m.guests']];
+  const unit=d=>d.u==='g'?(S.lang==='ar'?' غ':' g'):(S.lang==='ar'?' قطعة':' pcs');
+  $('#v-cook').innerHTML=head('cook',t('c.lede'))+`
+  <div class="card"><div class="sec-head"><h2>${t('c.who')}</h2><label class="switch"><input type="checkbox" id="ramadan" ${S.ramadan?'checked':''}><span>${t('c.ramadan')}</span></label></div>
+    <div class="members" style="margin-top:12px">${mem.map(([k,l])=>`<div class="member"><span>${t(l)}</span><div class="stepper"><button data-act="m" data-k="${k}" data-d="-1" aria-label="-">−</button><span class="num">${S.m[k]}</span><button data-act="m" data-k="${k}" data-d="1" aria-label="+">+</button></div></div>`).join('')}</div>
+    <div class="grid g2" style="margin-top:14px;align-items:center">
+      <div><label for="appetite" class="small">${t('c.appetite')}</label><input type="range" id="appetite" min="0.8" max="1.2" step="0.05" value="${S.appetite}"><div class="row small muted" style="justify-content:space-between"><span>${t('c.light')}</span><span>${t('c.normal')}</span><span>${t('c.hungry')}</span></div></div>
+      <p class="small muted">${S.ramadan?t('c.ramadan.s'):t('c.learn')}</p>
+    </div>
+  </div>
+  <div class="grid split">
+    <div class="card"><div class="sec-head"><h2>${t('c.menu')}</h2><span class="small muted">${t('c.kafi')} · ${t('c.usual')}</span></div>
+      ${DISHES.map(d=>{const n=need(d),u=usualFor(d);return `<div class="dish">${thumb('dish_'+d.id,'s56')}<div><b>${L(d)}</b></div><div class="kafi num">${n}${unit(d)}</div><div class="usual num">${u}${unit(d)}</div><div class="cmp"><div class="bar"><i style="width:${Math.min(100,n/u*100)}%;background:var(--accent)"></i></div><span class="small muted">−${Math.max(0,Math.round((1-n/u)*100))}%</span></div></div>`;}).join('')}
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><h2>${t('c.risk')}</h2><p class="small muted">${t('c.risk.s')}</p><div class="chart">${gauge(r)}</div>
+        <div class="row" style="justify-content:space-between"><div><div class="num" style="font-size:1.5rem;font-family:var(--f-display);color:var(--accent)">${r.kafi}%</div><span class="small muted">${t('c.withkafi')}</span></div><div style="text-align:end"><div class="num" style="font-size:1.5rem;font-family:var(--f-display);color:var(--exp)">${r.usual}%</div><span class="small muted">${t('c.withusual')}</span></div></div>
+      </div>
+      <div class="card"><h2 style="margin-bottom:10px">${t('c.ing')}</h2><div class="ing">${INGREDIENTS.map(g=>`<span class="pill ${g.have?(g.exp?'p-exp':'p-fresh'):(S.added?'p-plan':'p-muted')}">${miniImg(g.id)}${nameOf(g.id)} · ${g.have?(g.exp?t('c.expiring'):t('c.have')):(S.added?t('ly.incoming'):t('c.missing'))}</span>`).join('')}</div>
+        <button class="btn pri" style="margin-top:14px" data-act="addmissing" ${S.added?'disabled':''}>${S.added?t('c.added'):t('c.add')}</button></div>
+    </div>
+  </div>`;
+}
+function lineK(b){
+  if(b.act==='add') return {price:b.price,kg:b.kg,label:L(b.unit),th:b.th};
+  if(b.act==='remove') return {price:0,kg:0,label:'—',th:b.th};
+  if(b.act==='reduce') return {price:b.toQ*b.price,kg:b.toQ*b.kg,label:b.toQ+' × '+L(b.unit),th:b.th};
+  if(b.act==='resize'){const o=S.spinach?SPIN_OPTS[S.spinach]:b.to;return {price:o.price,kg:o.kg,label:L(o.unit),th:o.th};}
+  return {price:b.uq*b.price,kg:b.uq*b.kg,label:b.uq+' × '+L(b.unit),th:b.th};
+}
+const basketLines=()=>BASKET.concat(S.added?ADDS:[]);
+const usualTotal=()=>BASKET.reduce((s,b)=>s+b.uq*b.price,0);
+const kafiTotal=()=>basketLines().reduce((s,b)=>s+lineK(b).price,0);
+const kgAvoided=()=>BASKET.reduce((s,b)=>s+Math.max(0,b.uq*b.kg-lineK(b).kg),0);
+function renderBasket(){
+  const ut=usualTotal(),kt=kafiTotal();
+  const actPill={remove:'p-exp',reduce:'p-soon',resize:'p-soon',keep:'p-muted',add:'p-plan'};
+  $('#v-basket').innerHTML=head('basket',t('b.lede'))+`
+  <div class="grid split">
+    <div class="card"><div class="bk head"><span></span><span class="eyebrow">${t('b.item')}</span><span class="eyebrow">${t('b.usual')}</span><span class="eyebrow">${t('b.kafi')}</span></div>
+      ${basketLines().map(b=>{const k=lineK(b);const act=(b.id==='spinach'&&S.spinach==='usual')?'keep':b.act;return `<div class="bk">${thumb(k.th,'s48')}<div><b>${L(b)}</b><div style="margin-top:4px"><span class="pill ${actPill[act]}">${t('a.'+act)}</span></div></div><div class="${act!=='keep'&&act!=='add'?'strike':''} small">${b.act==='add'?'—':b.uq+' × '+L(b.unit)+'<br><span class="num">'+aed(b.uq*b.price)+'</span>'}</div><div class="small"><b>${k.label}</b>${k.price?'<br><span class="num">'+aed(k.price)+'</span>':''}</div>${b.why?`<div class="why">${L(b.why)}</div>`:''}</div>`;}).join('')}
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><p class="eyebrow" style="margin-bottom:10px">${t('b.store')}</p>
+        <div class="tot"><span class="muted">${t('b.usual')}</span><span class="num strike">${aed(ut)}</span></div>
+        <div class="tot"><span>${t('b.kafi')}</span><b class="num">${aed(kt)}</b></div>
+        <div class="tot"><span class="muted">${t('b.save')}</span><span class="num" style="color:var(--fresh);font-weight:600">${aed(Math.max(0,ut-kt))}</span></div>
+        <div class="tot"><span class="muted">${t('b.avoid')}</span><span class="num">${fmt(kgAvoided(),1)} ${t('kg')}</span></div>
+        <button class="btn pri" style="width:100%;justify-content:center;margin-top:12px" data-act="approve" ${S.order!=='draft'?'disabled':''}>${S.order==='placed'?t('b.placed'):t('b.approve')}</button>
+        <p class="small muted" style="margin-top:10px">${t('cf.sim')}</p>
+      </div>
+      <p class="price-note">${t('b.prices')}</p>
+    </div>
+  </div>`;
+}
+function lineChart(data){
+  const W=560,H=200,p={l:34,r:14,t:18,b:28},max=40;
+  const x=i=>p.l+i*(W-p.l-p.r)/(Math.max(8,data.length)-1),y=v=>p.t+(1-v/max)*(H-p.t-p.b);
+  const pts=data.map((v,i)=>[x(i),y(v)]);const path=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');
+  const area=path+` L${pts[pts.length-1][0].toFixed(1)} ${y(0)} L${pts[0][0]} ${y(0)} Z`;
+  const grid=[0,10,20,30,40].map(v=>`<line x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${p.l-6}" y="${y(v)+4}" text-anchor="end">${v}%</text>`).join('');
+  const xs=data.map((v,i)=>`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${i+1}</text>`).join('');const last=pts[pts.length-1];
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('l.chart')}">${grid}<path d="${area}" fill="var(--accent)" opacity=".12"/><path d="${path}" stroke="var(--accent)" stroke-width="2.2" fill="none"/>${pts.map(q=>`<circle cx="${q[0]}" cy="${q[1]}" r="3" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>`).join('')}<circle cx="${last[0]}" cy="${last[1]}" r="5.5" fill="var(--accent)"/><text x="${last[0]}" y="${last[1]-11}" text-anchor="middle" style="fill:var(--ink);font-weight:500">${data[data.length-1]}%</text>${xs}</svg>`;
+}
+function renderLeftovers(){
+  const lo=ITEMS.filter(i=>i.lo);
+  const ideas=[
+    {th:'dish_machboos',en:'Tomorrow’s lunch: rice and saloona bowls for 3',ar:'غداء الغد: أطباق أرز وصالونة لـ3 أشخاص',d:{en:'Uses 600 g rice + 400 g saloona. Nothing to buy.',ar:'يستخدم 600 غ أرز + 400 غ صالونة. لا حاجة للشراء.'}},
+    {th:'riceL',en:'Egg fried rice for the children’s dinner',ar:'أرز مقلي بالبيض لعشاء الأطفال',d:{en:'Uses leftover rice, 4 eggs and coriander before it wilts.',ar:'يستخدم الأرز المتبقي و4 بيضات والكزبرة قبل أن تذبل.'}},
+    {th:'dish_bread',en:'Khubz chips with labneh',ar:'رقائق خبز مع لبنة',d:{en:'Turns 2-day-old bread into a snack.',ar:'يحوّل خبز اليومين إلى وجبة خفيفة.'}}
+  ];
+  $('#v-leftovers').innerHTML=head('leftovers',t('l.lede'))+`
+  <div class="grid g2">
+    <div class="card"><h2>${t('l.now')}</h2><div class="list" style="margin-top:6px">${lo.map(i=>`<div class="li">${thumb(i.id,'s64')}<div class="grow"><div class="t">${L(i)}</div><div class="d">${L(i.q)} · ${leftTxt(i)}</div></div><span class="pill p-leftover">${t('s.leftover')}</span></div>`).join('')}</div>
+      <h2 style="margin-top:18px">${t('l.ideas')}</h2><div style="margin-top:4px">${ideas.map(x=>`<div class="idea">${thumb(x.th,'s56')}<div><div style="font-weight:500">${L(x)}</div><div class="small muted">${L(x.d)}</div></div></div>`).join('')}</div></div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><h2>${t('l.check')}</h2>
+        <div class="row" style="margin-top:12px">${['none','some','lots'].map(k=>`<button class="btn ${S.checkin===k?'pri':''}" data-act="checkin" data-k="${k}">${t('l.'+k)}</button>`).join('')}</div>
+        ${S.checkin?`<p class="small" style="margin-top:10px;color:var(--fresh)">${t('l.thanks')}</p>`:''}
+      </div>
+      <div class="card chart"><h2 style="margin-bottom:8px">${t('l.chart')}</h2>${lineChart(S.learn)}<p class="small muted">${t('l.wk')} 1–${S.learn.length} · ${t('example')}</p></div>
+    </div>
+  </div>
+  <div class="card" id="surplusCard"><div class="sec-head"><div><p class="eyebrow">Careem Box</p><h2 style="margin-top:4px">${t('sp.title')}</h2><p style="margin-top:4px">${t('sp.lede')}</p></div></div>
+    <div class="grid split" style="margin-top:10px;align-items:start">
+      <div class="list">${SURPLUS.map(x=>{const it=ITEMS.find(i=>i.id===x.id);return `<label class="li" style="cursor:pointer"><input type="checkbox" data-sur="${x.id}" ${S.surplus[x.id]?'checked':''} ${S.box!=='draft'?'disabled':''} style="accent-color:var(--accent);width:18px;height:18px">${thumb(x.id,'s48')}<div class="grow"><div class="t">${L(it)}</div><div class="d">${L(x.q)}</div></div></label>`;}).join('')}</div>
+      <div class="card" style="box-shadow:none;background:var(--bg)"><p class="eyebrow">${t('sp.to')}</p><p style="font-weight:600;margin-top:4px">${t('sp.dest')}</p><div class="tot"><span class="muted">${t('sp.fee')}</span><span class="num">${aed(15)}</span></div>
+        <button class="btn pri" style="width:100%;justify-content:center;margin-top:6px" data-act="boxsend" ${S.box!=='draft'?'disabled':''}>${S.box==='sent'?t('sp.sent'):t('sp.send')}</button>
+        <p class="price-note" style="margin-top:8px">${t('sp.note')}</p></div>
+    </div>
+  </div>`;
+}
+function ring(p){const R=58,C=2*Math.PI*R,o=C*(1-Math.min(1,p));return `<svg viewBox="0 0 150 150" width="150" height="150" class="ring" role="img"><circle cx="75" cy="75" r="${R}" stroke="var(--surface2)" stroke-width="12" fill="none"/><circle cx="75" cy="75" r="${R}" stroke="var(--accent)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${o}" transform="rotate(-90 75 75)"/><text x="75" y="78" text-anchor="middle" style="font-size:26px;font-weight:600;fill:var(--ink)">${Math.round(p*100)}%</text><text x="75" y="98" text-anchor="middle" style="font-size:11px;fill:var(--muted)">${t('p.of')}</text></svg>`;}
+function bars(data){
+  const W=560,H=200,p={l:30,r:10,t:18,b:28},max=9;const bw=(W-p.l-p.r)/data.length;const y=v=>p.t+(1-v/max)*(H-p.t-p.b);
+  const grid=[0,3,6,9].map(v=>`<line x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${p.l-6}" y="${y(v)+4}" text-anchor="end">${v}</text>`).join('');
+  const target=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(3.9)}" y2="${y(3.9)}" stroke="var(--fresh)" stroke-dasharray="5 4" stroke-width="1.5"/><text x="${W-p.r}" y="${y(3.9)-6}" text-anchor="end" style="fill:var(--fresh)">${t('p.goalline')}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('p.weekly')}">${grid}${data.map((v,i)=>`<rect x="${p.l+i*bw+bw*.2}" y="${y(v)}" width="${bw*.6}" height="${y(0)-y(v)}" rx="5" fill="${i===data.length-1?'var(--accent)':'color-mix(in srgb,var(--accent) 35%,transparent)'}"/><text x="${p.l+i*bw+bw/2}" y="${H-8}" text-anchor="middle">${i+1}</text>`).join('')}${target}</svg>`;
+}
+function renderPulse(){
+  const last=S.weekly[S.weekly.length-1];const prog=(7.8-last)/(7.8-3.9);
+  $('#v-pulse').innerHTML=head('pulse',t('p.lede'))+`
+  <div class="grid g4">
+    <div class="card stat good"><span class="eyebrow">${t('p.kg')}</span><div class="v num" data-count="${S.saved.kg}" data-dec="1">${fmt(S.saved.kg,1)}</div><div class="s">${t('kg')} · ${t('p.kg.s')}</div></div>
+    <div class="card stat good"><span class="eyebrow">${t('p.aed')}</span><div class="v num" data-count="${S.saved.aed}" data-dec="0">${fmt(S.saved.aed)}</div><div class="s">${S.lang==='ar'?'درهم':'Dh'} · ${t('p.aed.s')}</div></div>
+    <div class="card stat"><span class="eyebrow">${t('p.rate')}</span><div class="v num">${S.learn[S.learn.length-1]}%</div><div class="s">${t('p.rate.s')}</div></div>
+    <div class="card stat"><span class="eyebrow">${t('p.orders')}</span><div class="v num">${S.orders}</div><div class="s">${t('p.orders.s')}</div></div>
+  </div>
+  <div class="grid split-r">
+    <div class="card" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">${ring(prog)}<div style="flex:1;min-width:160px"><h2>${t('p.goal')}</h2><p class="small muted" style="margin-top:6px">${t('p.goal.s')}</p><p class="num" style="margin-top:8px">${fmt(last,1)} ${t('kg')} / ${S.lang==='ar'?'أسبوع':'week'}</p></div></div>
+    <div class="card chart"><h2 style="margin-bottom:8px">${t('p.weekly')}</h2>${bars(S.weekly)}</div>
+  </div>
+  <div class="card heart-big"><div class="sec-head"><div><h2>${t('p.heart')}</h2><p>${t('p.heart.s')}</p></div><div class="row">${Object.keys(AGENTS).map(k=>`<span class="pill" style="color:${AGENTS[k].col};background:color-mix(in srgb,${AGENTS[k].col} 14%,transparent)">${L(AGENTS[k])}</span>`).join('')}</div></div><canvas id="beatBig" style="margin-top:12px"></canvas></div>
+  <p class="foot">${t('foot')}</p>`;
+  const i=hearts.indexOf(bigHeart);if(i>=0) hearts.splice(i,1);
+  bigHeart=new Heart($('#beatBig'),()=>accentCol,260);hearts.push(bigHeart);
+  $$('#v-pulse [data-count]').forEach(el=>{const to=+el.dataset.count,d=+el.dataset.dec;let s=null;const f=ts=>{s=s||ts;const k=Math.min(1,(ts-s)/900);el.textContent=fmt(to*(1-Math.pow(1-k,3)),d);if(k<1) requestAnimationFrame(f);};requestAnimationFrame(f);});
+}
+const people=()=>S.m.a+S.m.e+S.m.k+S.m.g;
+function menuQ(m){const p=people()/7;return {u:Math.max(1,Math.round(m.u*p)),k:Math.max(1,Math.round(m.k*p))};}
+const fUsual=()=>MENU.reduce((s,m)=>s+menuQ(m).u*m.price,0);
+const fKafi=()=>MENU.reduce((s,m)=>s+menuQ(m).k*m.price,0);
+const fKg=()=>MENU.reduce((s,m)=>{const q=menuQ(m);return s+(q.u-q.k)*m.kg;},0);
+function renderOrderin(){
+  const ut=fUsual(),kt=fKafi();
+  $('#v-orderin').innerHTML=head('orderin',t('o.lede'))+`
+  <div class="grid split">
+    <div class="card">
+      <div class="sec-head"><div><p class="eyebrow">${t('o.rest')}</p><h2 style="margin-top:4px">${people()} ${t('o.people')}</h2></div><button class="btn" data-go="cook">${t('o.change')}</button></div>
+      <p class="small muted" style="margin-top:6px">${t('o.why')}</p>
+      <div class="bk head" style="margin-top:12px"><span></span><span class="eyebrow">${t('o.dish')}</span><span class="eyebrow">${t('o.usual')}</span><span class="eyebrow">${t('o.kafi')}</span></div>
+      ${MENU.map(m=>{const q=menuQ(m);const cut=q.k<q.u;return `<div class="bk">${thumb(m.th,'s48')}<div><b>${L(m)}</b><div style="margin-top:4px"><span class="pill ${cut?'p-soon':'p-muted'}">${t(cut?'a.reduce':'a.keep')}</span></div></div><div class="small ${cut?'strike':''}">${q.u} × ${aed(m.price)}</div><div class="small"><b>${q.k} ×</b> <span class="num">${aed(m.price)}</span></div></div>`;}).join('')}
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><p class="eyebrow" style="margin-bottom:10px">Careem Food</p>
+        <div class="tot"><span class="muted">${t('o.usual')}</span><span class="num strike">${aed(ut)}</span></div>
+        <div class="tot"><span>${t('o.kafi')}</span><b class="num">${aed(kt)}</b></div>
+        <div class="tot"><span class="muted">${t('b.save')}</span><span class="num" style="color:var(--fresh);font-weight:600">${aed(ut-kt)}</span></div>
+        <div class="tot"><span class="muted">${t('o.avoid')}</span><span class="num">${fmt(fKg(),1)} ${t('kg')}</span></div>
+        <div class="tot"><span class="muted">${t('o.left')}</span><span class="num"><span class="strike">≈ 32%</span> → <b style="font-size:1rem;color:var(--accent)">≈ 8%</b></span></div>
+        <button class="btn pri" style="width:100%;justify-content:center;margin-top:12px" data-act="foodapprove" ${S.foodOrder!=='draft'?'disabled':''}>${S.foodOrder==='placed'?t('o.placed'):t('b.approve')}</button>
+        <p class="small muted" style="margin-top:10px">${t('cf.sim')}</p>
+      </div>
+      <p class="price-note">${t('o.prices')}</p>
+    </div>
+  </div>`;
+}
+const fmtBig=n=>n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?Math.round(n/1e3)+'k':Math.round(n)+'';
+function cbCalc(){const c=S.cb;const before=c.hh*c.spend*c.s0/100,after=c.hh*c.spend*(1-c.cut/100)*c.s1/100;return {before,after,delta:(after-before)/before*100,tonnes:c.hh*2*52/1000};}
+function cbOut(){
+  const r=cbCalc(),max=Math.max(r.before,r.after);
+  const set=(id,v)=>{const e=$('#'+id);if(e) e.textContent=v;};
+  set('cbBefore','Dh '+fmtBig(r.before));set('cbAfter','Dh '+fmtBig(r.after));
+  set('cbDelta',(r.delta>=0?'+':'')+Math.round(r.delta)+'%');set('cbWaste',Math.round(r.tonnes).toLocaleString('en-US')+' '+t('cb.t'));
+  const b1=$('#cbBar1'),b2=$('#cbBar2');if(b1) b1.style.width=(r.before/max*100)+'%';if(b2) b2.style.width=(r.after/max*100)+'%';
+  const d=$('#cbDelta');if(d) d.style.color=r.delta>=0?'var(--fresh)':'var(--exp)';
+  [['hh',v=>fmtBig(v)],['spend',v=>'Dh '+v],['s0',v=>v+'%'],['s1',v=>v+'%'],['cut',v=>'−'+v+'%']].forEach(([k,f])=>set('cbv-'+k,f(S.cb[k])));
+}
+function renderCareem(){
+  const sl=(k,label,min,max,step)=>`<div><div class="row" style="justify-content:space-between"><label for="cb-${k}" class="small">${t(label)}</label><b class="num small" id="cbv-${k}"></b></div><input type="range" id="cb-${k}" data-cb="${k}" min="${min}" max="${max}" step="${step}" value="${S.cb[k]}"></div>`;
+  const reasons=[['cb.r1','cb.r1s','babyspinach'],['cb.r2','cb.r2s','dish_saloona'],['cb.r3','cb.r3s','dish_luqaimat'],['cb.r4','cb.r4s','dates']];
+  $('#v-careem').innerHTML=head('careem',t('cb.lede'))+`
+  <div class="grid split">
+    <div class="card"><div class="grid" style="gap:14px">${sl('hh','cb.hh',1000,100000,1000)}${sl('spend','cb.spend',200,1500,50)}${sl('s0','cb.share0',5,80,1)}${sl('s1','cb.share1',5,90,1)}${sl('cut','cb.cut',0,30,1)}</div><p class="price-note" style="margin-top:14px">${t('cb.model')}</p></div>
+    <div class="card"><div class="grid" style="gap:16px">
+      <div><span class="eyebrow">${t('cb.before')}</span><div class="row" style="justify-content:space-between;margin-top:4px"><div class="bar" style="flex:1;height:12px"><i id="cbBar1" style="background:var(--muted)"></i></div><b class="num" id="cbBefore"></b></div></div>
+      <div><span class="eyebrow">${t('cb.after')}</span><div class="row" style="justify-content:space-between;margin-top:4px"><div class="bar" style="flex:1;height:12px"><i id="cbBar2" style="background:var(--accent)"></i></div><b class="num" id="cbAfter"></b></div></div>
+      <div class="grid g2"><div class="stat"><span class="eyebrow">${t('cb.delta')}</span><div class="v num" id="cbDelta"></div></div><div class="stat good"><span class="eyebrow">${t('cb.waste')}</span><div class="v num" id="cbWaste"></div></div></div>
+    </div></div>
+  </div>
+  <div class="grid g4">${reasons.map(([a,b,th])=>`<div class="card" style="display:flex;flex-direction:column;gap:10px">${thumb(th,'s56')}<h3>${t(a)}</h3><p class="small muted">${t(b)}</p></div>`).join('')}</div>`;
+  cbOut();
+}
+function renderInsights(){
+  $('#v-insights').innerHTML=head('insights',t('i.lede'))+`<div class="grid g3">${STATS.map(s=>`<div class="card stat" style="display:flex;flex-direction:column;gap:8px"><div class="row" style="justify-content:space-between;align-items:flex-start"><div class="v" style="color:var(--accent)">${s.v}</div>${thumb(s.th,'s48')}</div><p>${L(s)}</p><div class="row" style="justify-content:space-between;margin-top:auto"><a class="src" href="${s.url}" target="_blank" rel="noopener">${s.src}</a><span class="pill ${s.tag==='i.est'||s.tag==='i.global'?'p-soon':s.tag==='i.company'?'p-plan':'p-fresh'}">${t(s.tag)}</span></div></div>`).join('')}</div>
+  <p class="foot">${S.lang==='ar'?'أرقام «تقدير» و«رقم عالمي» تُعرض كما نُشرت، مع ذكر نطاقها.':'Figures marked Estimate or Global figure are shown as published, with their scope stated.'}</p>`;
+}
+function renderApprovals(){
+  const a=approvalsList();
+  $('#v-approvals').innerHTML=head('approvals',t('ap.lede'))+(a.length?`<div class="card"><div class="list">${a.map(x=>`<div class="li">${thumb(x.th,'s56')}<div class="grow"><div class="t">${x.title}</div><div class="d">${x.sub}</div></div><span class="pill p-soon">${t('status.wait')}</span><button class="btn pri" data-go="${x.go}">${t('open')}</button></div>`).join('')}</div></div>`:`<div class="card"><p class="muted">${t('ap.none')}</p></div>`)+`
+  <div class="card"><div class="sec-head"><div><h2>${t('ap.auto')}</h2><p style="max-width:60ch;margin-top:4px">${t('ap.auto.s')}</p></div><label class="switch"><input type="checkbox" id="autopilot" ${S.autopilot?'checked':''}><span>${t('ap.on')}</span></label></div>
+    <div class="grid g2" style="margin-top:14px;align-items:center">
+      <div><div class="row" style="justify-content:space-between"><label for="limit" class="small">${t('ap.limit')}</label><b class="num" id="limitVal">${aed(S.limit)}</b></div><input type="range" id="limit" min="20" max="150" step="10" value="${S.limit}"><p class="small muted" style="margin-top:6px">${t('ap.sched')}</p></div>
+      <div><p class="eyebrow" style="margin-bottom:8px">${t('ap.staples')}</p><div class="row">${['milk','eggs','khubz'].map(id=>`<span class="pill p-muted" style="padding:3px 10px 3px 4px">${thumb(id,'s40')}${nameOf(id)}</span>`).join('')}</div></div>
+    </div>
+  </div>`;
+}
+function stPill(s){return `<span class="pill ${s==='done'?'p-fresh':s==='wait'?'p-soon':s==='blocked'?'p-exp':'p-muted'}">${t('status.'+s)}</span>`;}
+function renderAudit(){
+  const rows=S.audit.filter(e=>S.auditFilter==='all'||e.mut);
+  $('#v-audit').innerHTML=head('audit',t('au.lede'))+`<div class="filters"><button class="fchip" data-act="afilter" data-f="all" aria-pressed="${S.auditFilter==='all'}">${t('au.all')}</button><button class="fchip" data-act="afilter" data-f="mut" aria-pressed="${S.auditFilter==='mut'}"><i style="background:var(--exp)"></i>${t('au.mut')}</button></div>
+  <div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>${t('au.time')}</th><th>${t('au.agent')}</th><th>${t('au.tool')}</th><th>${t('au.why')}</th><th>${t('au.status')}</th></tr></thead><tbody>${rows.map(e=>`<tr><td class="num">${e.time}</td><td style="white-space:nowrap"><span style="color:${AGENTS[e.agent].col}">●</span> ${L(AGENTS[e.agent])}</td><td><span class="tool">${e.tool}</span>${e.mut?`<div class="mut">⚠ ${t('changes')}</div>`:''}</td><td style="min-width:220px">${L(e.why)}</td><td>${stPill(e.status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function renderTrust(){
+  const never=[{en:'Places an order, changes a cart or spends money without your approval, given per order or as an autopilot limit you set',ar:'يطلب أو يغيّر السلة أو ينفق المال دون موافقتك، لكل طلب أو ضمن حد الطيار الآلي الذي تحدده'},{en:'Quietly upsizes or picks a pricier substitute when something is out of stock',ar:'يكبّر العبوة أو يختار بديلاً أغلى دون علمك عند نفاد صنف'},{en:'Retries a mutating call after a timeout',ar:'يعيد محاولة استدعاء يغيّر الطلب بعد انتهاء المهلة'},{en:'Picks a payment method for you',ar:'يختار طريقة الدفع نيابةً عنك'},{en:'Gives medical or diet advice. It plans amounts, not health',ar:'يقدّم نصائح طبية أو غذائية. يخطط للمقادير، لا للصحة'}];
+  const always=[{en:'Checks the price with cart_get_basket_price and shows it before checkout',ar:'يتحقق من السعر عبر cart_get_basket_price ويعرضه قبل الدفع'},{en:'Explains every change to your basket in one line',ar:'يشرح كل تغيير في سلتك بسطر واحد'},{en:'Logs every tool call in the audit trail, with the reason',ar:'يسجّل كل استدعاء أداة في سجل الإجراءات مع السبب'},{en:'Lets you override: if you want three loaves, it orders three',ar:'يتيح لك التجاوز: إن أردت ثلاثة أكياس خبز، يطلب ثلاثة'}];
+  const data=[{en:'Kitchen memory stays with your household and can be cleared at any time',ar:'ذاكرة المطبخ تبقى مع أسرتك ويمكن مسحها في أي وقت'},{en:'Fridge photos are read once, then discarded',ar:'صور الثلاجة تُقرأ مرة واحدة ثم تُحذف'},{en:'Signed in through Careem. Kafi never sees card details',ar:'تسجيل الدخول عبر Careem. لا يرى كافي تفاصيل البطاقة أبداً'}];
+  const block=(title,arr,cls,ic)=>`<div class="card"><h2 style="margin-bottom:4px">${title}</h2>${arr.map(x=>`<div class="rule ${cls}"><span class="ico">${ic}</span><p>${L(x)}</p></div>`).join('')}</div>`;
+  $('#v-trust').innerHTML=head('trust',t('tr.lede'))+`<div class="grid g3">${block(t('tr.never'),never,'no','✕')}${block(t('tr.always'),always,'','✓')}${block(t('tr.data'),data,'','●')}</div><p class="src"><a href="https://builders.careem.com/docs/agent-playbook/" target="_blank" rel="noopener">Careem MCP · Agent Playbook</a></p>`;
+}
+function renderSources(){
+  const rows=[
+    [{en:'Careem MCP tool names and call order',ar:'أسماء أدوات Careem MCP وترتيب استدعائها'},'so.real',{en:'builders.careem.com Tool Catalog',ar:'كتالوج أدوات builders.careem.com'},'https://builders.careem.com/docs/tools/overview/'],
+    [{en:'Spinach prices (250 g Dh 4.50; Barakat baby spinach 175 g Dh 9.25)',ar:'أسعار السبانخ (250 غ بـ4.50 درهم؛ سبانخ صغيرة بركات 175 غ بـ9.25 درهم)'},'so.real',{en:'Checked by the team in UAE stores, Oct 2026',ar:'تحقق منها الفريق في متاجر الإمارات، أكتوبر 2026'},''],
+    [{en:'Other grocery prices',ar:'أسعار البقالة الأخرى'},'so.est',{en:'Typical UAE supermarket prices, approximate',ar:'أسعار معتادة في متاجر الإمارات، تقريبية'},''],
+    [{en:'Restaurant menu and Box delivery fee',ar:'قائمة المطعم ورسوم توصيل Box'},'so.syn',{en:'Example prices for a typical Dubai grill; Box fee is an example',ar:'أسعار نموذجية لمطعم مشويات في دبي؛ رسوم Box مثال'},''],
+    [{en:'Careem business model',ar:'نموذج الأعمال لـ Careem'},'so.est',{en:'Adjustable assumptions, not Careem data',ar:'افتراضات قابلة للتعديل، ليست بيانات Careem'},'#careem'],
+    [{en:'Careem Box tools and rules (send only; you choose payment)',ar:'أدوات Careem Box وقواعدها (إرسال فقط؛ أنت تختار الدفع)'},'so.real',{en:'Careem MCP Box docs',ar:'وثائق Careem MCP الخاصة بـ Box'},'https://builders.careem.com/docs/tools/box/'],
+    [{en:'Tool calls and orders in this demo',ar:'استدعاءات الأدوات والطلبات في هذا العرض'},'so.sim',{en:'Simulated in the page; no account connected',ar:'محاكاة داخل الصفحة؛ لا حساب متصل'},''],
+    [{en:'Household, kitchen items, savings',ar:'الأسرة وعناصر المطبخ والتوفير'},'so.syn',{en:'Example data written for the demo',ar:'بيانات نموذجية مكتوبة للعرض'},''],
+    [{en:'Shelf-life estimates',ar:'تقديرات مدة الصلاحية'},'so.est',{en:'Typical home storage times, illustrative',ar:'مدد تخزين منزلية معتادة، للتوضيح'},''],
+    [{en:'UAE food waste statistics',ar:'إحصاءات هدر الطعام في الإمارات'},'so.real',{en:'ne’ma, Dubai Carbon, The National, Gulf News',ar:'نِعمة، دبي كربون، ذا ناشونال، غلف نيوز'},'#insights'],
+    [{en:'Fridge photo reading',ar:'قراءة صورة الثلاجة'},'so.sim',{en:'Planned: Claude vision on Amazon Bedrock',ar:'مخطط: Claude للرؤية عبر Amazon Bedrock'},'']
+  ];
+  const kp={'so.real':'p-fresh','so.sim':'p-plan','so.syn':'p-soon','so.est':'p-muted'};
+  $('#v-sources').innerHTML=head('sources',t('so.lede'))+`<div class="card" style="padding:6px 8px"><div class="tbl-wrap"><table><thead><tr><th>${t('so.what')}</th><th>${t('so.kind')}</th><th>${t('so.where')}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${L(r[0])}</td><td><span class="pill ${kp[r[1]]}">${t(r[1])}</span></td><td>${r[3]?(r[3][0]==='#'?`<a href="${r[3]}" data-go="${r[3].slice(1)}">${L(r[2])}</a>`:`<a href="${r[3]}" target="_blank" rel="noopener">${L(r[2])}</a>`):L(r[2])}</td></tr>`).join('')}</tbody></table></div></div><p class="foot">${t('foot')}</p>`;
+}
+function renderTrace(){
+  $('#trace').innerHTML=S.audit.slice(0,30).map(e=>`<div class="tc"><div class="h"><span class="tool">${e.tool}</span>${stPill(e.status)}</div><div>${L(e.why)}</div><div class="row small muted" style="gap:8px"><span class="num">${e.time}</span><span>${L(AGENTS[e.agent])}</span>${e.mut?`<span class="mut">⚠ ${t('changes')}</span>`:`<span>${t('readonly')}</span>`}</div></div>`).join('');
+}
+
+/* ---------- twin UI ---------- */
+const STOPS={city:{p:[46,38,52],t:[0,0,0]},home:{p:[14,11,16],t:[0,1,-1]},kitchen:{p:[6.8,5,7.6],t:[0,1.2,-2.4]},fridge:{p:[4.7,2.7,2.6],t:[3.45,1.1,-3.6]},bin:{p:[3.8,2.6,.6],t:[1.85,.3,-3.85]},impact:{p:[0,17,9],t:[0,0,-1.5]}};
+const STAGES=['now','predicted','acts','saved'];
+function renderTwinUI(){
+  const cnt=l=>ITEMS.filter(i=>layerOf(i)===l).length;
+  $('#twLayers').innerHTML=`<h3><span>${t('tw.layers')}</span><span class="mono">L</span></h3>${['fresh','soon','leftover','incoming'].map(l=>`<label><input type="checkbox" data-act="tlayer" data-l="${l}" ${S.layers[l]?'checked':''}><i style="background:${COLORS[l==='incoming'?'incoming':l==='soon'?'exp':l]}"></i>${t('ly.'+l)}<span class="n">${l==='incoming'?INCOMING.length:cnt(l)}</span></label>`).join('')}`;
+  $('#twStops').innerHTML=Object.keys(STOPS).map(k=>`<button class="gbtn" data-act="stop" data-s="${k}" aria-pressed="${Twin.cur===k}">${t('st.'+k)}</button>`).join('');
+  const si=STAGES.indexOf(S.stage);
+  $('#twTime').innerHTML=`<div class="track"><span class="fill" style="width:calc(${si/3*100}% - ${si/3*18}px)"></span>${STAGES.map((s,i)=>`<button data-act="stage" data-s="${s}" class="${i===si?'on':i<si?'past':''}"><i></i><span>${t('tl.'+s)}</span></button>`).join('')}</div><p class="note"><span>${t('tln.'+S.stage)}</span><b>${t('tlm.'+S.stage)}</b></p>`;
+  $('#bXray').setAttribute('aria-pressed',S.xray);$('#bSep').setAttribute('aria-pressed',S.sep);
+  $$('[data-act="panel"]').forEach(b=>b.setAttribute('aria-pressed',S.panel===b.dataset.p));
+  renderPanel();
+}
+function renderPanel(){
+  const p=$('#sidePanel');
+  if(!S.panel){p.hidden=true;return;}
+  p.hidden=false;
+  Object.keys(agentHearts).forEach(k=>{const i=hearts.indexOf(agentHearts[k]);if(i>=0) hearts.splice(i,1);delete agentHearts[k];});
+  if(S.panel==='signals'){
+    const pre=S.stage==='now'||S.stage==='predicted';
+    const sig=[[{en:'Items mapped',ar:'عناصر مرصودة'},'21'],[{en:'Use within 48 h',ar:'للاستخدام خلال 48 ساعة'},'6'],[{en:'Bread use rate',ar:'معدل استهلاك الخبز'},S.lang==='ar'?'1 كيس/يوم':'1 pack / day'],[{en:'Rice left, last 3 dinners',ar:'الأرز المتبقي في آخر 3 وجبات'},'22%'],[{en:'Predicted waste, 24 h',ar:'هدر متوقع خلال 24 ساعة'},pre?'0.95 kg':'0.05 kg'],[{en:'Next delivery slot',ar:'موعد التوصيل التالي'},S.ramadan?'14:30':'18:15'],[{en:'Store',ar:'المتجر'},'Quik · Al Barsha']];
+    p.innerHTML=`<h3>${t('tw.signals')}<button data-act="panel" data-p="signals" aria-label="Close">✕</button></h3>${sig.map(s=>`<div class="sig"><span>${L(s[0])}</span><b>${s[1]}</b></div>`).join('')}`;
+  }else{
+    const last=k=>{const e=S.events.find(x=>x.agent===k);return e?e.time+' · '+L(e.msg):'—';};
+    p.innerHTML=`<h3>${t('tw.agents')}<button data-act="panel" data-p="agents" aria-label="Close">✕</button></h3>${Object.keys(AGENTS).map(k=>`<div class="agent"><b style="color:${AGENTS[k].col}">${L(AGENTS[k])}</b><small>${last(k)}</small><canvas id="ah-${k}"></canvas></div>`).join('')}`;
+    Object.keys(AGENTS).forEach(k=>{const h=new Heart($('#ah-'+k),AGENTS[k].col,60);agentHearts[k]=h;hearts.push(h);});
+  }
+}
+
+/* ---------- 3D kitchen twin ---------- */
+const Twin=(()=>{
+  let ok=false,R,SC,CAM,CTL,tween=null,clock,wrap,lbl,door,fLight,binFill,binLid,scraps=[],shelfMeshes=[],shellMats=[],saveLbl;
+  let sepK=0,xrK=0,binLvl=.55,binTarget=.55,started=false;
+  const meshes={},incoming={};
+  const F={x:3.5,z:-3.65,w:1.7,h:3.2,d:1.3};const SH=[.42,1.1,1.78,2.46];
+  const P={x:-5.6,z:-1.4,len:2.4,d:.7};const PS=[.55,1.3,2.05];
+  const api={cur:'kitchen'};
+  function std(c,o){return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.75,metalness:.02},o||{}));}
+  function box(w,h,d,m,x,y,z,sh){const me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x,y,z);if(sh!==false){me.castShadow=true;me.receiveShadow=true;}SC.add(me);return me;}
+  function ctex(w,h,draw,rx,ry){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const tx=new THREE.CanvasTexture(c);tx.encoding=THREE.sRGBEncoding;if(rx){tx.wrapS=tx.wrapT=THREE.RepeatWrapping;tx.repeat.set(rx,ry);}tx.anisotropy=4;return tx;}
+  const glowTex=()=>ctex(128,128,(x,w,h)=>{const g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.4,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,w,h);});
+  function init(){
+    wrap=$('#twinWrap');lbl=$('#labels');
+    if(!HAS3D){fail();return;}
+    try{R=new THREE.WebGLRenderer({canvas:$('#twinCanvas'),antialias:true});}catch(e){fail();return;}
+    R.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+    R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+    R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;
+    SC=new THREE.Scene();SC.background=new THREE.Color('#0A1310');SC.fog=new THREE.Fog('#0A1310',38,150);
+    CAM=new THREE.PerspectiveCamera(40,1,.1,400);CAM.position.set(80,70,90);
+    CTL=new THREE.OrbitControls(CAM,R.domElement);CTL.enableDamping=true;CTL.dampingFactor=.08;CTL.maxPolarAngle=Math.PI*.47;CTL.minDistance=1.5;CTL.maxDistance=140;
+    SC.add(new THREE.HemisphereLight('#bcd8cc','#0c1512',.42));
+    const sun=new THREE.DirectionalLight('#ffd9a8',.95);sun.position.set(-14,16,8);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-.0004;
+    Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10,near:1,far:60});SC.add(sun);
+    const fill=new THREE.DirectionalLight('#9fc9ff',.25);fill.position.set(10,8,12);SC.add(fill);
+    // ground, roads, city
+    const g=new THREE.Mesh(new THREE.PlaneGeometry(400,400),std('#0d1814',{roughness:1}));g.rotation.x=-Math.PI/2;g.position.y=-.08;g.receiveShadow=true;SC.add(g);
+    const grid=new THREE.GridHelper(260,52,'#1b362d','#11221c');grid.position.y=-.06;SC.add(grid);
+    const n=260,city=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),std('#0f1b17',{roughness:.95}),n);
+    const m4=new THREE.Matrix4(),q=new THREE.Quaternion();let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+    let c=0;for(let i=0;i<n*3&&c<n;i++){const x=(rnd()-.5)*220,z=(rnd()-.5)*220;if(Math.abs(x)<16&&Math.abs(z)<14) continue;const d=Math.hypot(x,z);const tall=d>40&&rnd()<.12;const h=tall?12+rnd()*34:1.5+rnd()*5;m4.compose(new THREE.Vector3(Math.round(x/5)*5,h/2,Math.round(z/5)*5),q,new THREE.Vector3(3+rnd()*5,h,3+rnd()*5));city.setMatrixAt(c++,m4);}
+    city.count=c;city.instanceMatrix.needsUpdate=true;SC.add(city);
+    const wg=new THREE.InstancedMesh(new THREE.BoxGeometry(.4,.4,.05),new THREE.MeshBasicMaterial({color:'#ffcf80'}),420);
+    for(let i=0;i<420;i++){const x=(rnd()-.5)*200,z=(rnd()-.5)*200;if(Math.abs(x)<18&&Math.abs(z)<16) m4.makeScale(0,0,0);else m4.compose(new THREE.Vector3(x,1+rnd()*10,z),q,new THREE.Vector3(1,1,1));wg.setMatrixAt(i,m4);}
+    wg.instanceMatrix.needsUpdate=true;SC.add(wg);
+    // textures
+    const floorT=ctex(512,512,(x,w,h)=>{const cols=['#8a6646','#7f5d3f','#93704e','#86623f'];for(let r=0;r<8;r++){for(let k=0;k<3;k++){x.fillStyle=cols[(r*3+k)%4];const off=(r%2)*85;x.fillRect((k*170+off)%w-(k*170+off>w?w:0),r*64,170,64);}x.fillStyle='rgba(0,0,0,.25)';x.fillRect(0,r*64,w,2);}for(let i=0;i<900;i++){x.fillStyle=`rgba(0,0,0,${Math.random()*.06})`;x.fillRect(Math.random()*w,Math.random()*h,30,1);}},3,3);
+    const tileT=ctex(256,256,(x,w,h)=>{x.fillStyle='#d9d2c3';x.fillRect(0,0,w,h);const s=32;for(let i=0;i<8;i++)for(let j=0;j<8;j++){x.fillStyle=(i+j)%5===0?'#2f6f63':((i*j)%7===0?'#e8e2d4':'#f1ece1');x.fillRect(i*s+1.5,j*s+1.5,s-3,s-3);}},5,1.4);
+    const rugT=ctex(256,256,(x,w,h)=>{x.fillStyle='#7a2e24';x.fillRect(0,0,w,h);x.strokeStyle='#e8cf9a';x.lineWidth=6;x.strokeRect(14,14,w-28,h-28);x.fillStyle='#1f4a3f';for(let i=0;i<4;i++)for(let j=0;j<4;j++){x.save();x.translate(48+i*54,48+j*54);x.rotate(Math.PI/4);x.fillRect(-12,-12,24,24);x.restore();}});
+    const skyT=ctex(64,256,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#2b4f66');g.addColorStop(.55,'#e8a15c');g.addColorStop(1,'#f4c77e');x.fillStyle=g;x.fillRect(0,0,w,h);});
+    const plaster=std('#cbbfa8',{roughness:.95}),wood=std('#6f5137',{roughness:.6}),cab=std('#1f4a3f',{roughness:.45}),top=std('#e6e1d6',{roughness:.25}),brass=std('#c9a45c',{metalness:.85,roughness:.28});
+    // floor + walls
+    const fl=new THREE.Mesh(new THREE.BoxGeometry(12.6,.14,9.6),new THREE.MeshStandardMaterial({map:floorT,roughness:.6}));fl.position.y=-.07;fl.receiveShadow=true;SC.add(fl);
+    box(12.6,3.4,.2,plaster,0,1.7,-4.8);box(.2,3.4,9.6,plaster,-6.3,1.7,0);
+    box(12.6,.35,.2,plaster,0,.17,4.8);box(.2,.35,9.6,plaster,6.3,.17,0);
+    const sp=new THREE.Mesh(new THREE.PlaneGeometry(6.6,1.1),new THREE.MeshStandardMaterial({map:tileT,roughness:.3}));sp.position.set(-1.6,1.55,-4.69);sp.receiveShadow=true;SC.add(sp);
+    // window on left wall
+    box(.08,1.5,2.2,std('#e8e2d4',{roughness:.5}),-6.18,1.9,1.2);
+    const win=new THREE.Mesh(new THREE.PlaneGeometry(2,1.3),new THREE.MeshBasicMaterial({map:skyT}));win.position.set(-6.13,1.9,1.2);win.rotation.y=Math.PI/2;SC.add(win);
+    box(.06,1.3,.05,std('#e8e2d4'),-6.12,1.9,1.2);box(.06,.05,2,std('#e8e2d4'),-6.12,1.9,1.2);
+    // counter, cabinets, stove, sink, dallah
+    box(6.6,.88,.9,cab,-1.6,.44,-4.25);box(6.7,.07,.98,top,-1.6,.915,-4.25);
+    for(let i=0;i<6;i++){box(.02,.6,.01,std('#183b32'),-4.35+i*1.1,.45,-3.79);box(.3,.025,.03,brass,-4.6+i*1.1+.4,.78,-3.78);}
+    box(6.6,.85,.45,cab,-1.6,2.55,-4.47);for(let i=0;i<5;i++) box(.025,.25,.03,brass,-4.2+i*1.3,2.3,-4.23);
+    box(1,.04,.6,std('#1b1d1c',{roughness:.3}),-.3,.97,-4.2);
+    [[-.55,-4.05],[-.05,-4.05],[-.55,-4.35],[-.05,-4.35]].forEach(p=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.09,.012,8,24),std('#333'));r.rotation.x=Math.PI/2;r.position.set(p[0],1,p[1]);SC.add(r);});
+    const pot=new THREE.Mesh(new THREE.CylinderGeometry(.24,.21,.3,28),std('#a9b2ae',{metalness:.8,roughness:.25}));pot.position.set(-.3,1.15,-4.12);pot.castShadow=true;SC.add(pot);
+    box(.8,.04,.5,std('#b8c0bd',{metalness:.8,roughness:.2}),-3.4,.96,-4.25);
+    const V2=(a,b)=>new THREE.Vector2(a,b);
+    const dallah=new THREE.Mesh(new THREE.LatheGeometry([V2(0,0),V2(.1,0),V2(.11,.02),V2(.09,.1),V2(.05,.2),V2(.04,.26),V2(.06,.3),V2(.03,.34),V2(.012,.38),V2(0,.39)],28),brass);dallah.position.set(-2.4,.95,-4.15);dallah.castShadow=true;SC.add(dallah);
+    const spout=new THREE.Mesh(new THREE.ConeGeometry(.018,.2,10),brass);spout.position.set(-2.32,1.18,-4.15);spout.rotation.z=-.9;SC.add(spout);
+    for(let i=0;i<3;i++){const cup=new THREE.Mesh(new THREE.CylinderGeometry(.03,.022,.045,14),std('#f4f0e6',{roughness:.3}));cup.position.set(-2.05+i*.09,.97,-4.0);SC.add(cup);}
+    // table, plates, chairs, pendant lamps
+    box(3.2,.08,1.5,wood,-.4,.82,1.5);[[-1.85,.88],[1.05,.88],[-1.85,2.12],[1.05,2.12]].forEach(p=>box(.08,.8,.08,wood,p[0],.4,p[1]));
+    for(let i=0;i<7;i++){const a=i/7*Math.PI*2;const pl=new THREE.Mesh(new THREE.CylinderGeometry(.16,.15,.02,24),std('#f4f2ec',{roughness:.25}));pl.position.set(-.4+Math.cos(a)*1.15,.875,1.5+Math.sin(a)*.5);pl.castShadow=true;SC.add(pl);}
+    const centre=food('dish_machboos');centre.scale.setScalar(1.6);centre.position.set(-.4,.86,1.5);SC.add(centre);
+    [[-1.6,.5],[-.4,.5],[.8,.5],[-1.6,2.5],[-.4,2.5],[.8,2.5]].forEach(p=>{box(.45,.06,.45,std('#2a5246',{roughness:.7}),p[0],.48,p[1]);box(.45,.5,.06,std('#2a5246',{roughness:.7}),p[0],.75,p[1]+(p[1]<1.5?-.2:.2));});
+    [-1.2,.4].forEach(x=>{box(.01,1.1,.01,std('#222'),x,2.85,1.5,false);const shade=new THREE.Mesh(new THREE.ConeGeometry(.25,.22,24,1,true),std('#1f4a3f',{side:THREE.DoubleSide,roughness:.5}));shade.position.set(x,2.2,1.5);SC.add(shade);const bulb=new THREE.Mesh(new THREE.SphereGeometry(.06,12,10),new THREE.MeshBasicMaterial({color:'#ffe3b0'}));bulb.position.set(x,2.1,1.5);SC.add(bulb);const pl=new THREE.PointLight('#ffcf8a',.55,5,2);pl.position.set(x,2.0,1.5);SC.add(pl);});
+    // majlis corner
+    const rug=new THREE.Mesh(new THREE.PlaneGeometry(2.6,3.6),new THREE.MeshStandardMaterial({map:rugT,roughness:.95}));rug.rotation.x=-Math.PI/2;rug.position.set(4.6,.005,1.7);rug.receiveShadow=true;SC.add(rug);
+    box(.85,.35,3.4,std('#8a3a2c',{roughness:.85}),5.75,.18,1.7);box(.25,.6,3.4,std('#8a3a2c',{roughness:.85}),6.1,.5,1.7);
+    for(let i=0;i<3;i++) box(.18,.38,.6,std(i%2?'#e8cf9a':'#1f4a3f',{roughness:.9}),5.95,.55,.7+i*1);
+    const tray=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,.03,30),brass);tray.position.set(4.6,.3,1.7);SC.add(tray);box(.5,.28,.5,wood,4.6,.14,1.7);
+    const dt=food('dates');dt.position.set(4.6,.32,1.7);SC.add(dt);
+    // plant
+    const potP=new THREE.Mesh(new THREE.CylinderGeometry(.22,.17,.45,20),std('#c9a27a',{roughness:.9}));potP.position.set(-5.6,.22,3.9);SC.add(potP);
+    for(let i=0;i<12;i++){const lf=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),std(i%2?'#2f6e45':'#3d8656',{roughness:.7}));const a=i/12*6.28;lf.position.set(-5.6+Math.cos(a)*.18,.7+Math.random()*.55,3.9+Math.sin(a)*.18);lf.scale.set(.6,1.4,.3);lf.rotation.set(Math.random(),a,Math.random()*.5);lf.castShadow=true;SC.add(lf);}
+    // fridge
+    const shell=std('#c9d1cf',{metalness:.55,roughness:.3,transparent:true,opacity:1});shellMats=[shell];
+    const liner=std('#f3f6f6',{roughness:.5});
+    box(F.w,F.h,.04,liner,F.x,F.h/2,F.z-F.d/2+.04);
+    box(.06,F.h,F.d,shell,F.x-F.w/2,F.h/2,F.z);box(.06,F.h,F.d,shell,F.x+F.w/2,F.h/2,F.z);
+    box(F.w,.06,F.d,shell,F.x,F.h,F.z);box(F.w,.12,F.d,liner,F.x,.06,F.z);box(F.w,F.h,.04,shell,F.x,F.h/2,F.z-F.d/2);
+    const glass=new THREE.MeshStandardMaterial({color:'#cfeaff',transparent:true,opacity:.3,roughness:.05});
+    SH.forEach((y,i)=>{const s=box(F.w-.1,.025,F.d-.1,glass,F.x,y,F.z,false);s.userData={baseY:y,i};shelfMeshes.push(s);});
+    const led=new THREE.Mesh(new THREE.BoxGeometry(F.w-.2,.02,.02),new THREE.MeshBasicMaterial({color:'#e6f7ff'}));led.position.set(F.x,F.h-.08,F.z+.45);SC.add(led);
+    door=new THREE.Group();door.position.set(F.x-F.w/2,0,F.z+F.d/2);
+    const dm=new THREE.Mesh(new THREE.BoxGeometry(F.w,F.h,.08),std('#c9d1cf',{metalness:.55,roughness:.3}));dm.position.set(F.w/2,F.h/2,.04);dm.castShadow=true;door.add(dm);
+    const dIn=new THREE.Mesh(new THREE.BoxGeometry(F.w-.1,F.h-.1,.02),liner);dIn.position.set(F.w/2,F.h/2,-.01);door.add(dIn);
+    const handle=new THREE.Mesh(new THREE.BoxGeometry(.04,1.2,.06),std('#6d7774',{metalness:.9,roughness:.2}));handle.position.set(F.w-.14,1.9,.13);door.add(handle);
+    const disp=new THREE.Mesh(new THREE.PlaneGeometry(.32,.18),new THREE.MeshBasicMaterial({color:'#0e2a22'}));disp.position.set(F.w/2,2.3,.081);door.add(disp);
+    SC.add(door);
+    fLight=new THREE.PointLight('#e8f6ff',0,4.5,2);fLight.position.set(F.x,2.2,F.z+.3);SC.add(fLight);
+    // pantry
+    PS.forEach(y=>box(P.d,.05,P.len,wood,P.x,y,P.z));box(P.d,2.4,.05,wood,P.x,1.2,P.z-P.len/2);box(P.d,2.4,.05,wood,P.x,1.2,P.z+P.len/2);
+    // bin with lid and scraps
+    const bm=std('#b9c2bf',{metalness:.75,roughness:.25,transparent:true,opacity:.55,side:THREE.DoubleSide});
+    const bo=new THREE.Mesh(new THREE.CylinderGeometry(.34,.3,.82,30,1,true),bm);bo.position.set(1.85,.41,-3.85);SC.add(bo);
+    binLid=new THREE.Group();binLid.position.set(1.85,.83,-4.19);const lid=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,.03,30),std('#c4ccc9',{metalness:.8,roughness:.2}));lid.position.set(0,0,.34);binLid.add(lid);SC.add(binLid);
+    binFill=new THREE.Mesh(new THREE.CylinderGeometry(.29,.28,1,26),std('#3b2a1c',{roughness:.9}));binFill.position.set(1.85,0,-3.85);SC.add(binFill);
+    for(let i=0;i<9;i++){const s=new THREE.Mesh(new THREE.SphereGeometry(.06,8,6),std(['#3f8f3a','#efe5c8','#c9763a','#d8b27a'][i%4],{roughness:.8}));s.userData.a=i/9*6.28;s.userData.r=.08+(i%3)*.06;SC.add(s);scraps.push(s);}
+    // items
+    const glow=glowTex();
+    const layout={};
+    ITEMS.forEach(it=>{const k=it.z+it.s;(layout[k]=layout[k]||[]).push(it);});
+    Object.values(layout).forEach(list=>{
+      const groups=list.map(it=>{const g=food(it.id);const bb=new THREE.Box3().setFromObject(g);return {it,g,bb,w:Math.max(bb.max.x-bb.min.x,.12),d:Math.max(bb.max.z-bb.min.z,.12)};});
+      const fr=list[0].z==='f';const usable=fr?F.w-.22:P.len-.25;
+      const total=groups.reduce((s,o)=>s+(fr?o.w:o.d),0);const gap=Math.max(.02,(usable-total)/(groups.length+1));
+      let cur=-usable/2+gap;
+      groups.forEach(({it,g,bb,w,d},k)=>{
+        const span=fr?w:d;const cx=(bb.min.x+bb.max.x)/2,cz=(bb.min.z+bb.max.z)/2;
+        let x,y,z;
+        if(fr){x=F.x+cur+span/2;y=(it.s===0?.12:SH[it.s-1]+.013);z=F.z+.05+(k%2?.12:-.08);}
+        else{x=P.x;y=PS[it.s]+.025;z=P.z+cur+span/2;}
+        cur+=span+gap;
+        const holder=new THREE.Group();holder.position.set(x,y,z);g.position.set(-cx,-bb.min.y,-cz);
+        if(!fr) holder.rotation.y=Math.PI/2*0;
+        holder.add(g);
+        const gm=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:glow,color:'#ffffff',transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
+        gm.rotation.x=-Math.PI/2;gm.position.y=.004;const gs=Math.max(w,d)*1.9;gm.scale.set(gs,gs,1);holder.add(gm);
+        holder.userData={it,base:y,shelf:fr?it.s:-1,glow:gm,h:bb.max.y-bb.min.y};
+        SC.add(holder);meshes[it.id]=holder;
+        const el=document.createElement('div');el.className='lbl';lbl.appendChild(el);holder.userData.el=el;
+      });
+    });
+    INCOMING.forEach((it,i)=>{
+      const g=food(it.id);const holder=new THREE.Group();holder.add(g);
+      const gm=new THREE.Mesh(new THREE.PlaneGeometry(.5,.5),new THREE.MeshBasicMaterial({map:glow,color:COLORS.incoming,transparent:true,opacity:.8,depthWrite:false,blending:THREE.AdditiveBlending}));gm.rotation.x=-Math.PI/2;holder.add(gm);
+      const start=new THREE.Vector3(F.x-1.1+i*.5,1.5,F.z+1.7),end=new THREE.Vector3(P.x,PS[2]+.03,P.z+.75+i*.3);
+      holder.position.copy(start);holder.userData={start,end,k:0,it,h:.14};holder.visible=false;SC.add(holder);incoming[it.id]=holder;
+      const el=document.createElement('div');el.className='lbl';lbl.appendChild(el);holder.userData.el=el;
+    });
+    saveLbl=document.createElement('div');saveLbl.className='lbl big';lbl.appendChild(saveLbl);
+    api.homeL=document.createElement('div');api.homeL.className='lbl big';lbl.appendChild(api.homeL);
+    clock=new THREE.Clock();
+    new ResizeObserver(resize).observe(wrap);resize();
+    ok=true;started=true;applyStage();loop();
+  }
+  function fail(){$('#twFallback').hidden=false;}
+  function resize(){if(!R||!wrap) return;const w=wrap.clientWidth,h=wrap.clientHeight;if(!w||!h) return;R.setSize(w,h,false);CAM.aspect=w/h;CAM.updateProjectionMatrix();}
+  function stop(k,dur){if(!ok) return;const s=STOPS[k];if(!s) return;tween={p0:CAM.position.clone(),t0:CTL.target.clone(),p1:new THREE.Vector3(...s.p),t1:new THREE.Vector3(...s.t),k:0,d:dur||1.5};api.cur=k;$$('[data-act="stop"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===k));}
+  const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+  function applyStage(){if(!ok) return;binTarget={now:.5,predicted:.85,acts:.45,saved:.25}[S.stage];if(S.stage==='predicted'&&!S.xray){S.xray=true;renderTwinUI();}}
+  const tmp=new THREE.Vector3();
+  function place(el,obj,html,show,yoff,maxD){
+    if(!show){el.style.opacity=0;return;}
+    obj.getWorldPosition(tmp);tmp.y+=yoff||0;
+    const d=CAM.position.distanceTo(tmp);tmp.project(CAM);
+    if(tmp.z>1||d>(maxD||9)||Math.abs(tmp.x)>1.05||Math.abs(tmp.y)>1.05){el.style.opacity=0;return;}
+    el.style.left=((tmp.x*.5+.5)*wrap.clientWidth)+'px';el.style.top=((-tmp.y*.5+.5)*wrap.clientHeight)+'px';
+    if(el._h!==html){el.innerHTML=html;el._h=html;}
+    el.style.opacity=1;
+  }
+  function loop(){
+    requestAnimationFrame(loop);
+    const dt=Math.min(.05,clock.getDelta()),tt=clock.elapsedTime;
+    if(S.view!=='twin') return;
+    if(tween){tween.k+=dt/tween.d;const e=ease(Math.min(1,tween.k));CAM.position.lerpVectors(tween.p0,tween.p1,e);CTL.target.lerpVectors(tween.t0,tween.t1,e);if(tween.k>=1) tween=null;}
+    CTL.update();
+    xrK+=((S.xray?1:0)-xrK)*Math.min(1,dt*4);sepK+=((S.sep?1:0)-sepK)*Math.min(1,dt*4);
+    shellMats.forEach(m=>{m.opacity=1-.85*xrK;m.depthWrite=xrK<.5;});
+    door.rotation.y=-1.95*xrK;fLight.intensity=xrK*1.3;
+    shelfMeshes.forEach(s=>s.position.y=s.userData.baseY+(s.userData.i+1)*.42*sepK);
+    binLvl+=(binTarget-binLvl)*Math.min(1,dt*2);const fh=Math.max(.02,binLvl*.78);binFill.scale.y=fh;binFill.position.y=fh/2+.02;
+    binLid.rotation.x=-(S.stage==='predicted'?.9+Math.sin(tt*3)*.05:0)*1;
+    scraps.forEach((s,i)=>{s.position.set(1.85+Math.cos(s.userData.a)*s.userData.r,fh+.04+(i%3)*.02,-3.85+Math.sin(s.userData.a)*s.userData.r);s.visible=binLvl>.35;});
+    const pulse=.5+.5*Math.sin(tt*4.5);
+    ITEMS.forEach(it=>{
+      const h=meshes[it.id],u=h.userData,st=stateOf(it);
+      h.visible=S.layers[layerOf(it)]&&st!=='gone';
+      h.position.y=u.base+(u.shelf>=0?u.shelf*.42*sepK:0);
+      const warn=S.stage==='predicted'&&it.left<=1;
+      const col=warn?COLORS.exp:(st==='fresh'?null:COLORS[st]);
+      if(col){u.glow.material.color.set(col);u.glow.material.opacity=warn?.55+pulse*.45:(st==='exp'?.35+pulse*.3:.42);}else u.glow.material.opacity=0;
+      let note='';
+      if(warn) note=t('wasted');else if(st==='plan') note=PLAN_TMRW.includes(it.id)?t('tmrw'):t('tonight');else if(st!=='fresh') note=leftTxt(it);
+      const show=h.visible&&st!=='fresh'&&(it.z==='f'?xrK>.5:true);
+      place(u.el,h,`<i style="background:${col||COLORS.exp}"></i>${L(it)} <em>${note}</em>`,show,u.h+.06,api.cur==='fridge'||api.cur==='bin'?7:10);
+    });
+    const inc=S.layers.incoming&&(S.stage==='acts'||S.stage==='saved');
+    INCOMING.forEach((it,i)=>{const h=incoming[it.id],u=h.userData;h.visible=inc;const tk=S.stage==='saved'?1:0;u.k+=(tk-u.k)*Math.min(1,dt*1.5);h.position.lerpVectors(u.start,u.end,u.k);h.position.y+=Math.sin(tt*2+i)*.06*(1-u.k);h.rotation.y+=dt*(1-u.k);
+      place(u.el,h,`<i style="background:${COLORS.incoming}"></i>${L(it)} <em>${t('ly.incoming')}</em>`,inc,u.h+.1,12);});
+    const sv=S.stage==='saved',pr=S.stage==='predicted';
+    place(saveLbl,binFill,sv?(S.lang==='ar'?'≈ 0.95 كغ · 9 دراهم وُفّرت':'≈ 0.95 kg · Dh 9 saved'):(S.lang==='ar'?'+0.95 كغ إلى السلة':'+0.95 kg headed for the bin'),sv||pr,.75,12);
+    if(api.homeL){const far=CAM.position.length()>24;tmp.set(0,3.6,0);tmp.project(CAM);if(far&&tmp.z<1){api.homeL.style.left=((tmp.x*.5+.5)*wrap.clientWidth)+'px';api.homeL.style.top=((-tmp.y*.5+.5)*wrap.clientHeight)+'px';const hh=`<i style="background:#4DB292"></i>${S.lang==='ar'?'منزلك · البرشاء':'Your home · Al Barsha'}`;if(api.homeL._h!==hh){api.homeL.innerHTML=hh;api.homeL._h=hh;}api.homeL.style.opacity=1;}else api.homeL.style.opacity=0;}
+    R.render(SC,CAM);
+  }
+  api.stop=stop;api.resize=resize;api.applyStage=applyStage;
+  api.boot=async function(){
+    if(!started) init();
+    if(S.booted) return;
+    S.booted=true;
+    const b=$('#boot');b.hidden=false;b._skip=false;
+    const steps=['boot.s1','boot.s2','boot.s3','boot.s4'];
+    const draw=k=>{$('#bootList').innerHTML=steps.map((s,i)=>`<li class="${i<k?'done':i===k?'on':''}"><i>${i<k?'✓':''}</i>${t(s)}</li>`).join('');$('#bootProg').style.width=(k/steps.length*100)+'%';};
+    if(ok){CAM.position.set(80,70,90);CTL.target.set(0,0,0);}
+    for(let k=0;k<=steps.length;k++){draw(k);if(k===1) stop('city',1.6);if(k===3) stop('home',1.6);if(b._skip) break;await sleep(850);if(b._skip) break;}
+    b.hidden=true;stop('kitchen',1.6);
+    call('pantry','get_activities',false,{en:'Read 30 days of past orders to rebuild kitchen memory',ar:'قراءة طلبات 30 يوماً لإعادة بناء ذاكرة المطبخ'});
+  };
+  return api;
+})();
+
+/* ---------- basket approval flow ---------- */
+let modalResolve=null;
+function modal(html){$('#modalRoot').innerHTML=`<div class="scrim"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;}
+function closeModal(){$('#modalRoot').innerHTML='';}
+function toast(msg){const r=$('#toastRoot');r.innerHTML=`<div class="toast" role="status">${msg}</div>`;clearTimeout(r._t);r._t=setTimeout(()=>r.innerHTML='',2800);}
+function openDrawer(o){$('#drawer').classList.toggle('open',o===undefined?!$('#drawer').classList.contains('open'):o);}
+const resolveModal=v=>{if(modalResolve){const r=modalResolve;modalResolve=null;r(v);}};
+async function runApproval(){
+  if(S.order!=='draft') return;
+  S.order='running';renderBasket();openDrawer(true);
+  call('basket','user_info',false,{en:'Use saved address: Home, Al Barsha',ar:'استخدام العنوان المحفوظ: المنزل، البرشاء'});await sleep(600);
+  call('basket','search_groceries_items',false,{en:'Check availability of 9 items at Quik Al Barsha',ar:'التحقق من توفر 9 عناصر في Quik البرشاء'});await sleep(800);
+  if(!S.spinach){
+    call('basket','search_groceries_items',false,{en:'Local spinach 250 g is out of stock. Asking you before choosing a pricier pack.',ar:'السبانخ المحلية 250 غ غير متوفرة. أسألك قبل اختيار عبوة أغلى.'},'blocked');
+    const o=(k,label,price,rec)=>`<button class="opt" data-act="spin" data-k="${k}">${thumb(SPIN_OPTS[k].th,'s48')}<span class="grow"><b>${label}</b><br><span class="small muted num">${aed(price)}</span></span>${rec?`<span class="pill p-fresh">${t('oos.rec')}</span>`:''}</button>`;
+    modal(`<p class="eyebrow">${t('b.store')}</p><h2>${t('oos.title')}</h2><p class="muted small">${t('oos.body')}</p>${o('barakat',t('oos.barakat'),9.25,1)}${o('skip',t('oos.skip'),0)}${o('usual',t('oos.usual'),18.5)}`);
+    await new Promise(r=>modalResolve=r);
+  }
+  closeModal();renderBasket();
+  const n=basketLines().filter(b=>lineK(b).price>0).length;
+  call('basket','create_grocery_cart_with_quantities',true,{en:'Build the cart you reviewed: '+n+' items',ar:'إنشاء السلة التي راجعتها: '+n+' عناصر'});await sleep(700);
+  call('basket','cart_get_basket_price',false,{en:'Price checked: '+aed(kafiTotal()),ar:'تم التحقق من السعر: '+aed(kafiTotal())});await sleep(500);
+  const w=call('basket','cart_checkout',true,{en:'Waiting for your confirmation to check out',ar:'بانتظار تأكيدك لإتمام الدفع'},'wait');
+  modal(`<p class="eyebrow">${t('b.store')}</p><h2>${t('cf.title')}</h2><div class="row" style="gap:6px">${basketLines().filter(b=>lineK(b).price>0).map(b=>thumb(lineK(b).th,'s40')).join('')}</div><div class="tot"><span>${t('b.kafi')}</span><b class="num">${aed(kafiTotal())}</b></div><p class="small muted">${t('cf.body')}</p><p class="small" style="color:var(--soon)">${t('cf.sim')}</p><div class="row" style="justify-content:flex-end"><button class="btn" data-act="cfno">${t('cf.cancel')}</button><button class="btn pri" data-act="cfyes" id="cfyes">${t('cf.place')}</button></div>`);
+  const yes=await new Promise(r=>modalResolve=r);
+  closeModal();
+  if(!yes){w.status='blocked';w.why={en:'You chose not now. Nothing was ordered.',ar:'اخترت «ليس الآن». لم يُطلب شيء.'};S.order='draft';renderTrace();renderBasket();renderNav();return;}
+  w.status='done';w.why={en:'Order placed after your confirmation: '+aed(kafiTotal()),ar:'تم الطلب بعد تأكيدك: '+aed(kafiTotal())};beat('basket',w.why,1.3);
+  S.order='placed';S.orders++;
+  S.saved.aed=Math.round(S.saved.aed+Math.max(0,usualTotal()-kafiTotal()));S.saved.kg=+(S.saved.kg+kgAvoided()).toFixed(1);
+  renderTrace();renderBasket();renderNav();
+  setTimeout(()=>call('basket','track_activity',false,{en:'Tracking delivery: rider assigned, about 35 min',ar:'تتبّع التوصيل: تم تعيين المندوب، نحو 35 دقيقة'}),900);
+  toast(t('b.placed'));
+}
+
+async function runFoodOrder(){
+  if(S.foodOrder!=='draft') return;
+  S.foodOrder='running';renderOrderin();openDrawer(true);
+  call('portion','food_personalized_search',false,{en:'Found your usual restaurant from past orders',ar:'العثور على مطعمك المعتاد من الطلبات السابقة'});await sleep(600);
+  call('portion','food_get_restaurant_menu',false,{en:'Read the menu and portion sizes',ar:'قراءة القائمة وأحجام الحصص'});await sleep(600);
+  const n=MENU.reduce((s,m)=>s+menuQ(m).k,0);
+  call('portion','cart_add_items',true,{en:'Added the right-sized order you reviewed: '+n+' dishes',ar:'إضافة الطلب بالحجم المناسب الذي راجعته: '+n+' أطباق'});await sleep(600);
+  call('portion','cart_get_basket_price',false,{en:'Price checked: '+aed(fKafi()),ar:'تم التحقق من السعر: '+aed(fKafi())});await sleep(400);
+  const w=call('portion','cart_checkout',true,{en:'Waiting for your confirmation to check out',ar:'بانتظار تأكيدك لإتمام الدفع'},'wait');
+  modal(`<p class="eyebrow">${t('o.rest')}</p><h2>${t('o.cf')}</h2><div class="row" style="gap:6px">${MENU.map(m=>thumb(m.th,'s40')).join('')}</div><div class="tot"><span>${t('o.kafi')}</span><b class="num">${aed(fKafi())}</b></div><p class="small muted">${t('cf.body')}</p><p class="small" style="color:var(--soon)">${t('cf.sim')}</p><div class="row" style="justify-content:flex-end"><button class="btn" data-act="cfno">${t('cf.cancel')}</button><button class="btn pri" data-act="cfyes" id="cfyes">${t('cf.place')}</button></div>`);
+  const yes=await new Promise(r=>modalResolve=r);closeModal();
+  if(!yes){w.status='blocked';w.why={en:'You chose not now. Nothing was ordered.',ar:'اخترت «ليس الآن». لم يُطلب شيء.'};S.foodOrder='draft';renderTrace();renderOrderin();return;}
+  w.status='done';w.why={en:'Restaurant order placed after your confirmation: '+aed(fKafi()),ar:'تم طلب المطعم بعد تأكيدك: '+aed(fKafi())};beat('portion',w.why,1.3);
+  S.foodOrder='placed';S.orders++;S.saved.aed=Math.round(S.saved.aed+fUsual()-fKafi());S.saved.kg=+(S.saved.kg+fKg()).toFixed(1);
+  renderTrace();renderOrderin();renderNav();toast(t('o.placed'));
+}
+async function runBox(){
+  if(S.box!=='draft') return;
+  const items=SURPLUS.filter(x=>S.surplus[x.id]);if(!items.length) return;
+  S.box='running';renderLeftovers();openDrawer(true);
+  call('leftover','box_get_config',false,{en:'Careem Box send is AVAILABLE in Al Barsha',ar:'خدمة إرسال Careem Box متاحة في البرشاء'});await sleep(500);
+  call('leftover','user_info',false,{en:'Saved address: Grandma’s house, Al Safa',ar:'العنوان المحفوظ: بيت الجدة، الصفا'});await sleep(500);
+  call('leftover','box_get_vehicle_types',false,{en:'Bike courier available for a small parcel',ar:'مندوب دراجة متاح لطرد صغير'});await sleep(500);
+  call('leftover','box_get_categories',false,{en:'Checked parcel categories for sealed food items',ar:'التحقق من فئات الطرود للأطعمة المغلقة'});await sleep(500);
+  const w=call('leftover','box_pre_checkout',false,{en:'Delivery priced at Dh 15 (example). Waiting for your payment choice.',ar:'تسعير التوصيل 15 درهماً (مثال). بانتظار اختيارك لطريقة الدفع.'},'wait');
+  modal(`<p class="eyebrow">Careem Box · ${t('sp.dest')}</p><h2>${t('sp.pay')}</h2><p class="small muted">${t('sp.pay.s')}</p><div class="row" style="gap:6px">${items.map(x=>thumb(x.id,'s40')).join('')}</div>${['card','wallet','cash'].map(k=>`<button class="opt" data-act="pay" data-k="${k}"><span class="grow"><b>${t('sp.'+k)}</b><br><span class="small muted num">${aed(15)}</span></span></button>`).join('')}<div class="row" style="justify-content:flex-end"><button class="btn" data-act="cfno">${t('cf.cancel')}</button></div>`);
+  const pay=await new Promise(r=>modalResolve=r);closeModal();
+  if(!pay){w.status='blocked';w.why={en:'You chose not now. Nothing was sent.',ar:'اخترت «ليس الآن». لم يُرسل شيء.'};S.box='draft';renderTrace();renderLeftovers();return;}
+  w.status='done';renderTrace();
+  call('leftover','box_create_order',true,{en:'Parcel booked to Grandma’s house, paid by '+T['sp.'+pay][0].toLowerCase(),ar:'تم حجز الطرد إلى بيت الجدة، الدفع: '+T['sp.'+pay][1]});
+  S.box='sent';S.saved.kg=+(S.saved.kg+items.reduce((s,x)=>s+x.kg,0)).toFixed(1);renderLeftovers();toast(t('sp.sent'));
+}
+
+/* ---------- scenario player ---------- */
+const SC={on:false,paused:false,skip:false,abort:false,i:0};
+const STEPS=[
+ {cap:{en:'7:00 am in Al Barsha. Kafi reads last month’s Careem orders and maps what is in this family’s kitchen.',ar:'السابعة صباحاً في البرشاء. يقرأ كافي طلبات Careem للشهر الماضي ويرسم خريطة لما في مطبخ هذه الأسرة.'},run:async()=>{go('twin');S.stage='now';S.xray=false;S.sep=false;renderTwinUI();Twin.applyStage();Twin.stop('kitchen',1.6);await W(6000);}},
+ {cap:{en:'Inside the fridge: spinach, coriander and last night’s rice will be in the bin by tomorrow night.',ar:'داخل الثلاجة: السبانخ والكزبرة وأرز الأمس ستكون في سلة المهملات بحلول مساء الغد.'},run:async()=>{S.stage='predicted';S.xray=true;renderTwinUI();Twin.applyStage();Twin.stop('fridge',1.6);call('pantry','get_activities',false,{en:'Freshness scan: 3 items will be wasted within 24 h',ar:'فحص الصلاحية: 3 عناصر ستُهدر خلال 24 ساعة'});await W(7000);}},
+ {cap:{en:'Kafi plans tonight’s dinner around them: chicken saloona with spinach. Only two spices are missing.',ar:'يخطط كافي عشاء الليلة حولها: صالونة دجاج بالسبانخ. ينقص نوعان فقط من البهارات.'},run:async()=>{S.stage='acts';renderTwinUI();Twin.applyStage();Twin.stop('kitchen',1.4);beat('portion',{en:'Planned saloona for 7 around expiring spinach',ar:'تخطيط صالونة لـ7 أشخاص حول السبانخ القاربة على الانتهاء'});await W(6000);}},
+ {cap:{en:'Portions come from who is eating and what this family left last time. Rice drops from the usual 900 g.',ar:'المقادير تعتمد على من سيأكل وما تبقّى في المرة الماضية. الأرز ينخفض من 900 غ المعتادة.'},run:async()=>{go('cook');await W(2500);if(!S.added){S.added=true;renderCook();beat('portion',{en:'Added loomi and bezar to the basket',ar:'إضافة اللومي والبزار إلى السلة'});}await W(4500);}},
+ {cap:{en:'The usual Monday basket, checked against the kitchen: bread and mangoes removed, laban halved, two baby-spinach packs swapped for one 250 g bunch.',ar:'سلة الاثنين المعتادة مقارنةً بالمطبخ: إزالة الخبز والمانجو، تقليل اللبن للنصف، واستبدال عبوتي السبانخ الصغيرة بربطة 250 غ.'},run:async()=>{go('basket');await W(7000);}},
+ {cap:{en:'Local spinach is out of stock. Kafi asks before choosing the pricier Barakat pack.',ar:'السبانخ المحلية غير متوفرة. يسأل كافي قبل اختيار عبوة بركات الأغلى.'},run:async()=>{runApproval();await W(4200);if($('[data-act="spin"]')){S.spinach='barakat';resolveModal();}await W(2600);if($('#cfyes')) resolveModal(true);await W(2500);}},
+ {cap:{en:'Next morning, one tap: “a little” was left. Kafi trims next week’s rice again.',ar:'صباح اليوم التالي، نقرة واحدة: تبقّى «قليل». يقلّل كافي أرز الأسبوع القادم مجدداً.'},run:async()=>{openDrawer(false);go('leftovers');await W(2500);doCheckin('some');await W(4500);}},
+ {cap:{en:'Sealed laban and bread they won’t finish go to grandma’s house by Careem Box. Kafi asks how to pay and never picks for them.',ar:'اللبن والخبز المغلقان اللذان لن ينتهوا منهما يذهبان إلى بيت الجدة عبر Careem Box. يسأل كافي عن طريقة الدفع ولا يختار عنهم أبداً.'},run:async()=>{go('leftovers');const c=$('#surplusCard');if(c) c.scrollIntoView({behavior:'smooth',block:'center'});await W(1500);runBox();await W(3800);if($('[data-act="pay"]')) resolveModal('card');await W(3000);openDrawer(false);}},
+ {cap:{en:'Ordering in instead? For 7 people Kafi trims the usual grill order: same restaurant, about a third less food, nothing missing.',ar:'تطلبون من مطعم بدلاً من ذلك؟ لـ7 أشخاص يقلّص كافي طلب المشاوي المعتاد: المطعم نفسه، طعام أقل بنحو الثلث، ولا ينقص شيء.'},run:async()=>{go('orderin');await W(7000);}},
+ {cap:{en:'And for Careem: smaller baskets, but more of the family’s food spending moves to Careem. The model makes the trade visible.',ar:'ولـ Careem: سلال أصغر، لكن ينتقل مزيد من إنفاق الأسرة على الطعام إلى Careem. النموذج يوضح المقايضة.'},run:async()=>{go('careem');await W(7000);}},
+ {cap:{en:'The bin stays light. Every saving lands in Pulse, and every tool call is in the audit trail.',ar:'سلة المهملات خفيفة. كل توفير يظهر في النبض، وكل استدعاء أداة في سجل الإجراءات.'},run:async()=>{go('twin');S.stage='saved';renderTwinUI();Twin.applyStage();Twin.stop('bin',1.6);await W(5000);go('pulse');await W(6500);}}
+];
+async function W(ms){let t0=0;while(t0<ms){await sleep(100);if(SC.abort) throw 'abort';if(SC.skip){SC.skip=false;return;}if(!SC.paused) t0+=100;}}
+function renderCap(){
+  if(!SC.on){$('#capRoot').innerHTML='';return;}
+  const s=STEPS[SC.i];
+  $('#capRoot').innerHTML=`<div class="caption" role="status"><p>${L(s.cap)}</p><div class="ctl"><div class="dots">${STEPS.map((_,i)=>`<i class="${i<=SC.i?'on':''}"></i>`).join('')}</div><button data-act="scpause">${SC.paused?t('sc.resume'):t('sc.pause')}</button><button data-act="scnext">${t('sc.next')}</button><button data-act="scexit">${t('sc.exit')}</button></div></div>`;
+}
+async function play(){
+  if(SC.on) return;
+  resetDemo();
+  Object.assign(SC,{on:true,paused:false,skip:false,abort:false,i:0});
+  try{for(SC.i=0;SC.i<STEPS.length;SC.i++){renderCap();await STEPS[SC.i].run();}}catch(e){}
+  SC.on=false;renderCap();
+}
+function resetDemo(){
+  closeModal();modalResolve=null;
+  Object.assign(S,{foodOrder:'draft',box:'draft',surplus:{laban:true,khubz:true,dates:false},stage:'now',xray:false,sep:false,added:false,spinach:null,order:'draft',checkin:null,learn:[34,29,27,22,18,15,12,9],weekly:[7.8,7.1,6.6,5.9,5.2,4.8,4.4,4.1],saved:{kg:6.4,aed:148},orders:13,finished:{}});
+  renderNav();
+}
+function doCheckin(k){
+  if(S.checkin) return;
+  S.checkin=k;S.learn=S.learn.concat([{none:6,some:8,lots:19}[k]]);
+  S.weekly=S.weekly.concat([k==='lots'?4.6:k==='some'?3.9:3.6]).slice(-8);
+  beat('leftover',{en:'Check-in: '+(k==='none'?'nothing':k==='some'?'a little':'a lot')+' left. Rice portion adjusted.',ar:'متابعة: تبقّى '+(k==='none'?'لا شيء':k==='some'?'قليل':'كثير')+'. تم تعديل مقدار الأرز.'});
+  renderLeftovers();renderNav();
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');
+  if(g){e.preventDefault();go(g.dataset.go);return;}
+  const a=e.target.closest('[data-act]');if(!a) return;
+  switch(a.dataset.act){
+    case 'nav':$('#nav').classList.toggle('open');break;
+    case 'drawer':openDrawer();break;
+    case 'lang':S.lang=S.lang==='en'?'ar':'en';try{localStorage.setItem('kafi.lang',S.lang);}catch(err){}i18nStatic();renderNav();render(S.view);renderTrace();renderCap();break;
+    case 'theme':{const r=document.documentElement;const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');r.dataset.theme=cur==='dark'?'light':'dark';accentCol=cssv('--accent');break;}
+    case 'play':play();break;
+    case 'scpause':SC.paused=!SC.paused;renderCap();break;
+    case 'scnext':SC.skip=true;break;
+    case 'scexit':SC.abort=true;SC.on=false;renderCap();break;
+    case 'skipboot':$('#boot')._skip=true;break;
+    case 'layers':{const el=$('#twLayers');const mob=matchMedia('(max-width:820px)').matches;el.classList.toggle(mob?'show':'off');a.setAttribute('aria-pressed',mob?el.classList.contains('show'):!el.classList.contains('off'));break;}
+    case 'xray':S.xray=!S.xray;renderTwinUI();break;
+    case 'sep':S.sep=!S.sep;renderTwinUI();break;
+    case 'stop':Twin.stop(a.dataset.s);break;
+    case 'stage':S.stage=a.dataset.s;if(S.stage==='now') S.xray=false;Twin.applyStage();renderTwinUI();Twin.stop({now:'kitchen',predicted:'fridge',acts:'kitchen',saved:'bin'}[S.stage]);break;
+    case 'panel':S.panel=S.panel===a.dataset.p?null:a.dataset.p;renderTwinUI();break;
+    case 'layer':S.layers[a.dataset.l]=!S.layers[a.dataset.l];renderKitchen();break;
+    case 'finish':{const id=a.dataset.id;S.finished[id]=!S.finished[id];renderKitchen();toast(S.finished[id]?t('k.finished'):t('k.correct'));if(S.finished[id]) beat('pantry',{en:'Kitchen memory corrected: '+nameOf(id)+' finished',ar:'تصحيح ذاكرة المطبخ: '+ITEMS.find(i=>i.id===id).ar+' منتهٍ'});break;}
+    case 'photo':S.photoMode='fridge';$('#photo').click();break;
+    case 'receipt':S.photoMode='receipt';$('#photo').click();break;
+    case 'foodapprove':runFoodOrder();break;
+    case 'boxsend':runBox();break;
+    case 'pay':resolveModal(a.dataset.k);break;
+    case 'm':{const k=a.dataset.k;S.m[k]=Math.max(k==='a'?1:0,Math.min(12,S.m[k]+(+a.dataset.d)));renderCook();break;}
+    case 'addmissing':S.added=true;renderCook();beat('portion',{en:'Added loomi and bezar to the basket',ar:'إضافة اللومي والبزار إلى السلة'});toast(t('c.added'));break;
+    case 'approve':runApproval();break;
+    case 'spin':S.spinach=a.dataset.k;resolveModal();break;
+    case 'cfyes':resolveModal(true);break;
+    case 'cfno':resolveModal(false);break;
+    case 'checkin':doCheckin(a.dataset.k);break;
+    case 'afilter':S.auditFilter=a.dataset.f;renderAudit();break;
+  }
+});
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if(el.dataset&&el.dataset.act==='tlayer'){S.layers[el.dataset.l]=el.checked;return;}
+  if(el.dataset&&el.dataset.sur){S.surplus[el.dataset.sur]=el.checked;return;}
+  if(el.id==='autopilot'){S.autopilot=el.checked;
+    beat('basket',{en:S.autopilot?'Autopilot on: staples only, up to '+aed(S.limit)+' a week':'Autopilot off: every order waits for you',ar:S.autopilot?'الطيار الآلي مفعّل: الأساسيات فقط، حتى '+aed(S.limit)+' أسبوعياً':'الطيار الآلي متوقف: كل طلب ينتظرك'});
+    if(S.autopilot&&!S.autoDone){S.autoDone=true;setTimeout(()=>{if(!S.autopilot) return;call('basket','cart_checkout',true,{en:'Autopilot: 30 eggs reordered for Dh 14.50, within your '+aed(S.limit)+' weekly limit',ar:'الطيار الآلي: إعادة طلب 30 بيضة بـ14.50 درهم، ضمن حدك الأسبوعي '+aed(S.limit)});toast(S.lang==='ar'?'الطيار الآلي أعاد طلب البيض ضمن حدك':'Autopilot reordered eggs within your limit');},5000);}
+    return;}
+  if(el.id==='photo'&&el.files&&el.files[0]&&S.photoMode==='receipt'){
+    const n=$('#scanNote');if(n) n.textContent=t('k.scanning');
+    setTimeout(()=>{if(n) n.textContent=t('k.receipted');beat('pantry',{en:'Receipt from another store read (simulated): 2 items added',ar:'قراءة إيصال من متجر آخر (محاكاة): أُضيف عنصران'});},1400);
+    el.value='';S.photoMode='fridge';return;
+  }
+  if(el.id==='ramadan'){S.ramadan=el.checked;renderCook();if(S.ramadan) call('portion','food_get_scheduling_slots',false,{en:'Ramadan mode: looking for a delivery slot before the 3–5 pm rush',ar:'وضع رمضان: البحث عن موعد توصيل قبل ذروة 3–5 مساءً'});}
+  if(el.id==='photo'&&el.files&&el.files[0]){
+    const n=$('#scanNote');if(n) n.textContent=t('k.scanning');
+    $$('.food').forEach((c,i)=>setTimeout(()=>c.classList.add('scan'),i*60));
+    setTimeout(()=>{if(n) n.textContent=t('k.scanned');beat('pantry',{en:'Fridge photo matched to kitchen memory (simulated)',ar:'مطابقة صورة الثلاجة مع ذاكرة المطبخ (محاكاة)'});},1600);
+    el.value='';
+  }
+});
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if(el.dataset&&el.dataset.cb){S.cb[el.dataset.cb]=+el.value;cbOut();return;}
+  if(el.id==='limit'){S.limit=+el.value;const v=$('#limitVal');if(v) v.textContent=aed(S.limit);return;}
+  if(e.target.id==='appetite'){S.appetite=+e.target.value;const sc=$('#view').scrollTop;renderCook();$('#view').scrollTop=sc;const r=$('#appetite');if(r) r.focus();}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!modalResolve) closeModal();openDrawer(false);$('#nav').classList.remove('open');}
+  if(S.view!=='twin'||/input|textarea|select/i.test(e.target.tagName)||e.ctrlKey||e.metaKey||e.altKey) return;
+  const k=e.key.toLowerCase();
+  if(k==='x'){S.xray=!S.xray;renderTwinUI();}
+  else if(k==='e'){S.sep=!S.sep;renderTwinUI();}
+  else if(k==='l'){$('#bLayers').click();}
+  else if(k==='0'){Twin.stop('kitchen');}
+});
+
+/* ---------- ambient life ---------- */
+const AMBIENT=[
+ ['pantry','get_activities',{en:'Freshness check: bananas ripen tomorrow',ar:'فحص الصلاحية: الموز ينضج غداً'}],
+ ['basket','search_groceries_items',{en:'Price watch: local spinach 250 g still Dh 4.50',ar:'مراقبة السعر: السبانخ المحلية 250 غ ما زالت بـ4.50 درهم'}],
+ ['portion','food_personalized_search',{en:'Checked your usual restaurants in case you order in tonight',ar:'فحص مطاعمك المعتادة في حال الطلب الليلة'}],
+ ['leftover','get_activities',{en:'Leftover rice: 1 day left, planned for lunch',ar:'الأرز المتبقي: يوم واحد، مخطط للغداء'}],
+ ['pantry','reverse_geocode',{en:'Confirmed delivery zone: Al Barsha 1',ar:'تأكيد منطقة التوصيل: البرشاء 1'}]
+];
+let ai=0;
+function seed(){
+  const base=[['07:00','pantry','get_activities',{en:'Read 30 days of orders to rebuild kitchen memory',ar:'قراءة طلبات 30 يوماً لإعادة بناء ذاكرة المطبخ'}],['07:01','pantry','user_info',{en:'Household of 7, home address Al Barsha',ar:'أسرة من 7 أفراد، العنوان: البرشاء'}],['07:03','leftover','get_activities',{en:'Found 2 leftovers from Sunday dinner',ar:'العثور على بقايا من عشاء الأحد'}],['07:05','basket','search_groceries_items',{en:'Drafted the usual Monday basket from past orders',ar:'إعداد سلة الاثنين المعتادة من الطلبات السابقة'}],['07:06','portion','food_get_restaurant_menu',{en:'Checked menu sizes at your 3 usual restaurants',ar:'فحص أحجام الوجبات في مطاعمك الثلاثة المعتادة'}]];
+  base.forEach(([tm,ag,tool,why])=>{S.audit.unshift({time:tm,agent:ag,tool,mut:false,why,status:'read'});S.events.unshift({time:tm,agent:ag,msg:why});});
+}
+setInterval(()=>{if(document.hidden) return;const [ag,tool,why]=AMBIENT[ai++%AMBIENT.length];call(ag,tool,false,why);},11000);
+setInterval(()=>{if(Math.random()<.5) hearts.forEach(h=>h.beat(.35));},2400);
+let acc=0,lt=performance.now();
+(function hl(ts){acc+=ts-lt;lt=ts;if(acc>1000) acc=0;while(acc>28){hearts.forEach(h=>h.step());acc-=28;}hearts.forEach(h=>h.draw());requestAnimationFrame(hl);})(performance.now());
+const mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener) mq.addEventListener('change',()=>{accentCol=cssv('--accent');});
+
+/* ---------- start ---------- */
+seed();i18nStatic();renderTrace();
+window.addEventListener('hashchange',()=>{const h=(location.hash||'').slice(1);if(VIEWS.includes(h)&&h!==S.view) go(h);});
+const start=(location.hash||'').slice(1);
+go(VIEWS.includes(start)?start:'twin');
+})();
+</script>
+
+</html>
